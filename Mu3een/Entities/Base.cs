@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Mu3een.Models
+namespace Mu3een.Entities
 {
     public class Base
     {

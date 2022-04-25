@@ -1,4 +1,4 @@
-﻿namespace Mu3een.Models
+﻿namespace Mu3een.Entities
 {
     public class SocialServiceType : Base
     {
