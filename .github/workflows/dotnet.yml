@@ -40,3 +40,10 @@ jobs:
        host: ${{ secrets.REMOTE_HOST }}
        username: ${{ secrets.REMOTE_USER }}
        password: ${{ secrets.REMOTE_PASSWORD }}
+    - name: Update database
+      run: |
+        dotnet tool install --global dotnet-ef
+        dotnet tool restore
+        dotnet ef database update
+      env:
+       ASPNETCORE_ENVIRONMENT: Production
