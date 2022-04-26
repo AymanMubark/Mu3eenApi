@@ -33,10 +33,10 @@ jobs:
         host: ${{ secrets.REMOTE_HOST }}
         username: ${{ secrets.REMOTE_USER }}
         password: ${{ secrets.REMOTE_PASSWORD }}
-    #- name: Run SSH command
-    #  uses: garygrossgarten/github-action-ssh@v0.3.0
-    #  with:
-    #    command: sudo service Mu3eenApi restart
-    #    host: ${{ secrets.REMOTE_HOST }}
-    #    username: ${{ secrets.REMOTE_USER }}
-    #    password: ${{ secrets.REMOTE_PASSWORD }}
+    - name: Run SSH command
+      uses: garygrossgarten/github-action-ssh@v0.3.0
+      with:
+       command: sudo service mu3eenApi restart
+       host: ${{ secrets.REMOTE_HOST }}
+       username: ${{ secrets.REMOTE_USER }}
+       password: ${{ secrets.REMOTE_PASSWORD }}
