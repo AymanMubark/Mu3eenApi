@@ -21,12 +21,16 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen();
 
+    // configure strongly typed settings object
+    services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
     // configure DI for application services
     services.AddScoped<IJwtUtils, JwtUtils>();
     services.AddScoped<IUserService, UserService>();
     services.AddScoped<IRegionService, RegionService>();
     services.AddScoped<ISocialServiceTypeService, SocialServiceTypeService>();
     services.AddScoped<ISocialServiceService, SocialServiceService>();
+    services.AddScoped<IVolunteerService, VolunteerService>();
 }
 var app = builder.Build();
 

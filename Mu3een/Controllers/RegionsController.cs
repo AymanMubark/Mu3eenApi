@@ -11,7 +11,6 @@ namespace Mu3een.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly IRegionService _regionService;
-
         public RegionsController(IRegionService regionService)
         {
             _regionService = regionService;
