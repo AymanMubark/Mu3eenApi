@@ -17,7 +17,10 @@ namespace Mu3een.Services
         public Task<IEnumerable<VolunteerServiceModel>> GetSocialServicesById(Guid id);
         public Task<Volunteer> GetById(Guid id);
         public Task<Volunteer?> GetByPhone(string phone);
+        public Task SetCompletedServices(Guid id, Guid socialServiceId);
+        public Task ExChangePoints(Guid id, Guid rewardId);
     }
+
     public class VolunteerService : IVolunteerService
     {
         public readonly Mu3eenContext _db;
@@ -93,7 +96,7 @@ namespace Mu3een.Services
 
         public async Task ApplyToService(Guid volunteerId, Guid socialServiceId)
         {
-            var service = _db.VolunteerSocialServices.SingleOrDefaultAsync(x =>x.VolunteerId == volunteerId && x.SocialServiceId == socialServiceId);
+            var service = _db.VolunteerSocialServices.SingleOrDefaultAsync(x => x.VolunteerId == volunteerId && x.SocialServiceId == socialServiceId);
             if (service == null)
             {
                 await _db.VolunteerSocialServices.AddAsync(new VolunteerSocialService()
@@ -104,5 +107,61 @@ namespace Mu3een.Services
                 await _db.SaveChangesAsync();
             }
         }
+
+        public async Task SetCompletedServices(Guid id, Guid socialServiceId)
+        {
+            VolunteerSocialService? volunteerSocialService = await _db.VolunteerSocialServices.SingleOrDefaultAsync(x => x.SocialServiceId == socialServiceId && x.VolunteerId == id);
+            if (volunteerSocialService != null)
+            {
+                if (!volunteerSocialService.Completed)
+                {
+                    SocialService? socialService = await _db.SocialServices.FindAsync(id);
+                    if (socialService != null)
+                    {
+
+                        Volunteer? volunteer = await GetById(id);
+                        volunteer.Points += socialService.Points;
+                        _db.Volunteers.Update(volunteer);
+
+                        volunteerSocialService.Completed = true;
+                        _db.VolunteerSocialServices.Update(volunteerSocialService);
+
+                        await _db.SaveChangesAsync();
+                    }
+                }
+            }
+        }
+
+        public async Task ExChangePoints(Guid id, Guid rewardId)
+        {
+            var reward = await _db.Rewards.FindAsync(rewardId);
+            if (reward == null)
+            {
+                throw new KeyNotFoundException("reward exp");
+            }
+            Volunteer? volunteer = await GetById(id);
+            if(volunteer.Points < reward.Points)
+            {
+                throw new AppException("poins les than provider  point");
+            }
+            var volunteerReward = await _db.VolunteerRewards.SingleOrDefaultAsync(x => x.VolunteerId == id && x.RewardId == rewardId);
+            if (volunteerReward == null)
+            {
+                volunteerReward = new VolunteerReward()
+                {
+                    VolunteerId = id,
+                    RewardId = rewardId,
+                };
+
+                await _db.VolunteerRewards.AddAsync(volunteerReward);
+
+
+                volunteer.Points -= reward!.Points!;
+                _db.Volunteers.Update(volunteer);
+
+                await _db.SaveChangesAsync();
+            }
+        }
+
     }
 }

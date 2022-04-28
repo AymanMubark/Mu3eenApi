@@ -82,11 +82,38 @@ namespace Mu3een.Controllers
         /// </summary>
         /// <param name="id">volunteer Id</param>
         /// <returns></returns>
-        [HttpGet("{id}/ApplyToService")]
+        [HttpPost("{id}/ApplyToService")]
         public async Task<ActionResult> ApplyToService(Guid id,[FromBody]Guid socialServiceId)
         {
             await _volunteerService.ApplyToService(id, socialServiceId);
             return Ok();
         }
+
+        /// <summary>
+        /// Get Social Services
+        /// </summary>
+        /// <param name="id">provider id</param>
+        /// <param name="socialServiceId">socialServiceId Id</param>
+        /// <returns></returns>
+        [HttpPost("{id}/SetCompletedServices")]
+        public async Task<ActionResult> SetCompletedServices(Guid id,[FromBody]Guid socialServiceId)
+        {
+            await _volunteerService.SetCompletedServices(id, socialServiceId);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Get ExChangePoints of volanter with reward
+        /// </summary>
+        /// <param name="id">provider id</param>
+        /// <param name="socialServiceId">socialServiceId Id</param>
+        /// <returns></returns>
+        [HttpPost("{id}/ExChangePoints")]
+        public async Task<ActionResult> ExChangePoints(Guid id,[FromBody]Guid rewardId)
+        {
+            await _volunteerService.ExChangePoints(id, rewardId);
+            return Ok();
+        }
+
     }
 }

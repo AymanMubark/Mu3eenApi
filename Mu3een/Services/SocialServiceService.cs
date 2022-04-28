@@ -10,9 +10,9 @@ namespace Mu3een.Services
     {
         public Task<IEnumerable<SocialServiceModel>> GetAll();
         public Task<IEnumerable<SocialServiceModel>> GetAllByProviderId(Guid id);
+        public Task<IEnumerable<VolunteerServiceModel>> GetServicesVolunteersById(Guid id);
         public Task<SocialServiceModel> GetSocialServiceById(Guid id);
         public Task<SocialService> GetById(Guid id);
-        public Task SetCompletedServices(Guid id, Guid providerId);
         public Task Add(SocialServiceAddRequestModel model, string baseUrl);
         public Task Delete(Guid id);
     }
@@ -76,46 +76,11 @@ namespace Mu3een.Services
             return socialService;
         }
 
-        public async Task SetCompletedServices(Guid id, Guid volunteerId)
+        public async Task<IEnumerable<VolunteerServiceModel>> GetServicesVolunteersById(Guid id)
         {
-            VolunteerSocialService? volunteerSocialService = await _db.VolunteerSocialServices.SingleOrDefaultAsync(x => x.SocialServiceId == id && x.VolunteerId == volunteerId);
-            if (volunteerSocialService != null)
-            {
-                if (!volunteerSocialService.Completed)
-                {
-                    SocialService socialService = await GetById(id);
+            return await _db.VolunteerSocialServices.Where(x => x.SocialServiceId == id).Select(x => new VolunteerServiceModel(x)).ToListAsync();
+        }
 
-                    Volunteer? volunteer = await _volunteerService.GetById(id);
-                    volunteer.Points += socialService.Points;
-                    _db.Volunteers.Update(volunteer);
-
-                    volunteerSocialService.Completed = true;
-                    _db.VolunteerSocialServices.Update(volunteerSocialService);
-
-                    await _db.SaveChangesAsync();
-                }
-            }
-        } 
-        
-        //public async Task SetCompletedServices(Guid id, Guid volunteerId)
-        //{
-        //    VolunteerSocialService? volunteerSocialService = await _db.VolunteerRewards.SingleOrDefaultAsync(x => x.SocialServiceId == id && x.VolunteerId == volunteerId);
-        //    if (volunteerSocialService != null)
-        //    {
-        //        if (!volunteerSocialService.Completed)
-        //        {
-        //            SocialService socialService = await GetById(id);
-
-        //            Volunteer? volunteer = await _volunteerService.GetById(id);
-        //            volunteer.Points += socialService.Points;
-        //            _db.Volunteers.Update(volunteer);
-
-        //            volunteerSocialService.Completed = true;
-        //            _db.VolunteerSocialServices.Update(volunteerSocialService);
-
-        //            await _db.SaveChangesAsync();
-        //        }
-        //    }
-        //}
+      
     }
 }

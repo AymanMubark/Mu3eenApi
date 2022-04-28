@@ -10,6 +10,5 @@ namespace Mu3een.Entities
         [Column("RewardId")]
         public Guid? RewardId { get; set; }
         public Reward? Reward { get; set; }
-        public bool? Turned { get; set; } = false;
     }
 }
