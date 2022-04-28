@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Mu3een.Entities
 {
@@ -6,6 +7,7 @@ namespace Mu3een.Entities
     {
         [StringLength(50)]
         public string? Name { get; set; }
+        public string? Email { get; set; }
         public string? ImageUrl { get; set; }
         public Role Role { get; set; }
     }

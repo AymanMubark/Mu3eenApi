@@ -10,10 +10,13 @@ namespace Mu3een.Controllers
     public class VolunteersController : ControllerBase
     {
         private readonly IVolunteerService _volunteerService;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public VolunteersController(IVolunteerService volunteerService)
+
+        public VolunteersController(IVolunteerService volunteerService, IHttpContextAccessor contextAccessor)
         {
             _volunteerService = volunteerService;
+            _contextAccessor = contextAccessor;
         }
 
         /// <summary>
@@ -21,9 +24,10 @@ namespace Mu3een.Controllers
         /// </summary>
         /// <param name="phone"></param>
         /// <returns>OTP</returns>
-        
-        [HttpPost("EneterPhoneNumber")]
-        public async Task<ActionResult<string>> EneterPhoneNumber([FromBody] string phone)
+
+
+        [HttpPost("VerifyPhone")]
+        public async Task<ActionResult<string>> VerifyPhone([FromBody] string phone)
         {
             return Ok(await _volunteerService.Login(phone));
         }
@@ -48,6 +52,41 @@ namespace Mu3een.Controllers
         public async Task<ActionResult<VolunteerModel>> Get(Guid id)
         {
             return Ok(await _volunteerService.GetVolunteerById(id));
+        }
+
+        /// <summary>
+        /// Get Rewords
+        /// </summary>
+        /// <param name="id">volunteer Id</param>
+        /// <returns></returns>
+        [HttpGet("{id}/Rewords")]
+        public async Task<ActionResult<IEnumerable<VolunteerRewardModel>>> GetRewords(Guid id)
+        {
+            return Ok(await _volunteerService.GetRewardsById(id));
+        }
+
+
+        /// <summary>
+        /// Get Social Services
+        /// </summary>
+        /// <param name="id">volunteer Id</param>
+        /// <returns></returns>
+        [HttpGet("{id}/SocialServices")]
+        public async Task<ActionResult<IEnumerable<VolunteerServiceModel>>> GetSocialServices(Guid id)
+        {
+            return Ok(await _volunteerService.GetSocialServicesById(id));
+        } 
+        
+        /// <summary>
+        /// Get Social Services
+        /// </summary>
+        /// <param name="id">volunteer Id</param>
+        /// <returns></returns>
+        [HttpGet("{id}/ApplyToService")]
+        public async Task<ActionResult> ApplyToService(Guid id,[FromBody]Guid socialServiceId)
+        {
+            await _volunteerService.ApplyToService(id, socialServiceId);
+            return Ok();
         }
     }
 }

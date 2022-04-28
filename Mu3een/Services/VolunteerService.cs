@@ -10,8 +10,11 @@ namespace Mu3een.Services
     public interface IVolunteerService
     {
         public Task<string> Login(string phone);
+        public Task ApplyToService(Guid volunteerId, Guid socialServiceId);
         public Task<VerifyOTPResponseModel> VerifyOTP(string phone, string otp);
         public Task<VolunteerModel> GetVolunteerById(Guid id);
+        public Task<IEnumerable<VolunteerRewardModel>> GetRewardsById(Guid id);
+        public Task<IEnumerable<VolunteerServiceModel>> GetSocialServicesById(Guid id);
         public Task<Volunteer> GetById(Guid id);
         public Task<Volunteer?> GetByPhone(string phone);
     }
@@ -76,6 +79,30 @@ namespace Mu3een.Services
                 Token = _iJwtUtils.GenerateJwtToken(volunteer),
                 User = new VolunteerModel(volunteer),
             };
+        }
+
+        public async Task<IEnumerable<VolunteerRewardModel>> GetRewardsById(Guid id)
+        {
+            return await _db.VolunteerRewards.Where(x => x.VolunteerId == id).Select(x => new VolunteerRewardModel(x)).ToListAsync();
+        }
+
+        public async Task<IEnumerable<VolunteerServiceModel>> GetSocialServicesById(Guid id)
+        {
+            return await _db.VolunteerSocialServices.Where(x => x.VolunteerId == id).Select(x => new VolunteerServiceModel(x)).ToListAsync();
+        }
+
+        public async Task ApplyToService(Guid volunteerId, Guid socialServiceId)
+        {
+            var service = _db.VolunteerSocialServices.SingleOrDefaultAsync(x =>x.VolunteerId == volunteerId && x.SocialServiceId == socialServiceId);
+            if (service == null)
+            {
+                await _db.VolunteerSocialServices.AddAsync(new VolunteerSocialService()
+                {
+                    VolunteerId = volunteerId,
+                    SocialServiceId = socialServiceId,
+                });
+                await _db.SaveChangesAsync();
+            }
         }
     }
 }

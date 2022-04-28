@@ -17,8 +17,9 @@ namespace Mu3een.Entities
         public Region? Region { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public int? VolunteerRequried { get; set; }
-        public int? Points { get; set; }
+        public int Points { get; set; } = 0;
         public string? Address { get; set; }
+        public string? ImageUrl { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
     }

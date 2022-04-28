@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mu3een.Data;
 
@@ -11,9 +12,10 @@ using Mu3een.Data;
 namespace Mu3een.Migrations
 {
     [DbContext(typeof(Mu3eenContext))]
-    partial class Mu3eenContextModelSnapshot : ModelSnapshot
+    [Migration("20220427230506_alter_user_email")]
+    partial class alter_user_email
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,9 +52,6 @@ namespace Mu3een.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -101,9 +100,6 @@ namespace Mu3een.Migrations
                     b.Property<DateTime?>("ExpiryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double?>("Latitude")
                         .HasColumnType("float");
 
@@ -113,7 +109,7 @@ namespace Mu3een.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Points")
+                    b.Property<int?>("Points")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("ProviderId")
@@ -226,9 +222,6 @@ namespace Mu3een.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("Turned")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
 
@@ -245,14 +238,11 @@ namespace Mu3een.Migrations
                     b.ToTable("VolunteerRewards");
                 });
 
-            modelBuilder.Entity("Mu3een.Entities.VolunteerSocialService", b =>
+            modelBuilder.Entity("Mu3een.Entities.VolunteerService", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Completed")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -277,7 +267,7 @@ namespace Mu3een.Migrations
 
                     b.HasIndex("VolunteerId");
 
-                    b.ToTable("VolunteerSocialServices");
+                    b.ToTable("VolunteerServices");
                 });
 
             modelBuilder.Entity("Mu3een.Entities.Admin", b =>
@@ -376,7 +366,7 @@ namespace Mu3een.Migrations
                     b.Navigation("Volunteer");
                 });
 
-            modelBuilder.Entity("Mu3een.Entities.VolunteerSocialService", b =>
+            modelBuilder.Entity("Mu3een.Entities.VolunteerService", b =>
                 {
                     b.HasOne("Mu3een.Entities.SocialService", "SocialService")
                         .WithMany()
