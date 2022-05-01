@@ -52,6 +52,7 @@ namespace Mu3een.Services
             {
                 Token = _iJwtUtils.GenerateJwtToken(provider),
                 User = new ProviderModel(provider),
+                Role = "Provider",
             };
         }
 

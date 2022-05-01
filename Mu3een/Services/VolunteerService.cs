@@ -81,6 +81,7 @@ namespace Mu3een.Services
             {
                 Token = _iJwtUtils.GenerateJwtToken(volunteer),
                 User = new VolunteerModel(volunteer),
+                Role = "Volunteer",
             };
         }
 
@@ -142,7 +143,7 @@ namespace Mu3een.Services
             Volunteer? volunteer = await GetById(id);
             if(volunteer.Points < reward.Points)
             {
-                throw new AppException("poins les than provider  point");
+                throw new AppException("points les than provider points");
             }
             var volunteerReward = await _db.VolunteerRewards.SingleOrDefaultAsync(x => x.VolunteerId == id && x.RewardId == rewardId);
             if (volunteerReward == null)
