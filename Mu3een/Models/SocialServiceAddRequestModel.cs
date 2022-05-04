@@ -3,7 +3,7 @@
     public class SocialServiceAddRequestModel
     {
         public string? Name { get; set; }
-        public Guid? ProviderId { get; set; }
+        public Guid? InstitutionId { get; set; }
         public Guid? SocialServiceTypeId { get; set; }
         public Guid? RegionId { get; set; }
         public DateTime? ExpiryDate { get; set; }

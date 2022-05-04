@@ -144,7 +144,7 @@ namespace Mu3een.Services
             Volunteer? volunteer = await GetById(id);
             if(volunteer.Points < reward.Points)
             {
-                throw new AppException("points les than provider points");
+                throw new AppException("points les than institution points");
             }
             var volunteerReward = await _db.VolunteerRewards.SingleOrDefaultAsync(x => x.VolunteerId == id && x.RewardId == rewardId);
             if (volunteerReward == null)

@@ -5,9 +5,9 @@ namespace Mu3een.Entities
     public class SocialService : Base
     {
         public string? Name { get; set; }
-        [Column("ProviderId")]
-        public Guid? ProviderId { get; set; }
-        public Provider? Provider { get; set; }    
+        [Column("InstitutionId")]
+        public Guid? InstitutionId { get; set; }
+        public Institution? Institution { get; set; }    
 
         [Column("SocialServiceTypeId")]
         public Guid? SocialServiceTypeId { get; set; }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mu3een.Data;
 
@@ -11,9 +12,10 @@ using Mu3een.Data;
 namespace Mu3een.Migrations
 {
     [DbContext(typeof(Mu3eenContext))]
-    partial class Mu3eenContextModelSnapshot : ModelSnapshot
+    [Migration("20220504025935_change_provider_institution")]
+    partial class change_provider_institution
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,10 +1,10 @@
 ﻿namespace Mu3een.Entities
 {
-    public class Provider : User
+    public class Institution : User
     {
-        public Provider()
+        public Institution()
         {
-            Role = Role.Provider;
+            Role = Role.Institution;
         }
         public string? Phone { get; set; }
         public string? Password { get; set; }

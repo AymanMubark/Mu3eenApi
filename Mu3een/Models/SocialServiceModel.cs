@@ -11,7 +11,7 @@ namespace Mu3een.Models
         public SocialServiceModel(SocialService model)
         {
             Name = model.Name;
-            Provider = new ProviderModel(model.Provider!);
+            Institution = new InstitutionModel(model.Institution!);
             SocialServiceType = model.SocialServiceType;
             Region = model.Region;
             VolunteerRequried = model.VolunteerRequried;
@@ -24,7 +24,7 @@ namespace Mu3een.Models
         }
         public string? Id { get; set; }
         public string? Name { get; set; }
-        public ProviderModel? Provider { get; set; }
+        public InstitutionModel? Institution { get; set; }
         public SocialServiceType? SocialServiceType { get; set; }
         public Region? Region { get; set; }
         public DateTime? ExpiryDate { get; set; }

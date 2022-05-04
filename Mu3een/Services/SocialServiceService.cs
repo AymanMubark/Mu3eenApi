@@ -9,7 +9,7 @@ namespace Mu3een.Services
     public interface ISocialServiceService
     {
         public Task<IEnumerable<SocialServiceModel>> GetAll();
-        public Task<IEnumerable<SocialServiceModel>> GetAllByProviderId(Guid id);
+        public Task<IEnumerable<SocialServiceModel>> GetAllByInstitutionId(Guid id);
         public Task<IEnumerable<VolunteerServiceModel>> GetServicesVolunteersById(Guid id);
         public Task<SocialServiceModel> GetSocialServiceById(Guid id);
         public Task<SocialService> GetById(Guid id);
@@ -40,7 +40,7 @@ namespace Mu3een.Services
                 ExpiryDate = model.ExpiryDate,
                 Latitude = model.Latitude,
                 Longitude = model.Longitude,
-                ProviderId = model.ProviderId,
+                InstitutionId = model.InstitutionId,
                 RegionId = model.RegionId,
                 SocialServiceTypeId = model.SocialServiceTypeId,
                 VolunteerRequried = model.VolunteerRequried,
@@ -60,9 +60,9 @@ namespace Mu3een.Services
             return await _db.SocialServices.Select(x => new SocialServiceModel(x)).ToListAsync();
         }
 
-        public async Task<IEnumerable<SocialServiceModel>> GetAllByProviderId(Guid id)
+        public async Task<IEnumerable<SocialServiceModel>> GetAllByInstitutionId(Guid id)
         {
-            return await _db.SocialServices.Where(x => x.ProviderId == id).Select(x => new SocialServiceModel(x)).ToListAsync();
+            return await _db.SocialServices.Where(x => x.InstitutionId == id).Select(x => new SocialServiceModel(x)).ToListAsync();
         }
 
         public async Task<SocialServiceModel> GetSocialServiceById(Guid id)

@@ -7,72 +7,72 @@ namespace Mu3een.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProvidersController : ControllerBase
+    public class InstitutionsController : ControllerBase
     {
         private readonly IHttpContextAccessor _contextAccessor;
 
-        private readonly IProviderService _providerService;
+        private readonly IInstitutionService _institutionService;
 
-        public ProvidersController(IProviderService providerService, IHttpContextAccessor httpContextAccessor)
+        public InstitutionsController(IInstitutionService institutionService, IHttpContextAccessor httpContextAccessor)
         {
-            _providerService = providerService;
+            _institutionService = institutionService;
             _contextAccessor = httpContextAccessor;
         }
 
         /// <summary>
-        /// Login provider
+        /// Login institution
         /// </summary>
         /// <param name="model"></param>
-        /// <returns>ProviderLoginResponseModel</returns>
+        /// <returns>InstitutionLoginResponseModel</returns>
         [HttpPost("Login")]
-        public async Task<ActionResult<ProviderLoginResponseModel>> Login(ProviderLoginRequestModel model) 
+        public async Task<ActionResult<InstitutionLoginResponseModel>> Login(InstitutionLoginRequestModel model) 
         {
-            return Ok(await _providerService.Login(model.Email,model.Passowrd));
+            return Ok(await _institutionService.Login(model.Email,model.Passowrd));
         }
 
         /// <summary>
-        /// Register Provider
+        /// Register Institution
         /// </summary>
         /// <param name="model"></param>
-        /// <returns>ProviderLoginResponseModel</returns>
+        /// <returns>InstitutionLoginResponseModel</returns>
         [HttpPost("Register")]
-        public async Task<ActionResult<ProviderLoginResponseModel>> Register([FromForm] ProviderRegisterModel model) 
+        public async Task<ActionResult<InstitutionLoginResponseModel>> Register([FromForm] InstitutionRegisterModel model) 
         {
             var request = _contextAccessor.HttpContext!.Request;
-            return Ok(await _providerService.Register(model, $"{request.Scheme}://{request.Host}"));
+            return Ok(await _institutionService.Register(model, $"{request.Scheme}://{request.Host}"));
         } 
         
         /// <summary>
-        /// Register Provider
+        /// Register Institution
         /// </summary>
         /// <param name="id"></param>
-        /// <returns>ProviderLoginResponseModel</returns>
+        /// <returns>InstitutionLoginResponseModel</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProviderModel>> Get(Guid id) 
+        public async Task<ActionResult<InstitutionModel>> Get(Guid id) 
         {
-            return Ok(await _providerService.GetProviderById(id));
+            return Ok(await _institutionService.GetInstitutionById(id));
         }
 
         /// <summary>
-        /// Get Provider Rewards
+        /// Get Institution Rewards
         /// </summary>
         /// <param name="id"></param>
         /// <returns>IEnumerable RewardModel</returns>
         [HttpGet("{id}/Rewards")]
         public async Task<ActionResult<IEnumerable<RewardModel>>> GetRewards(Guid id) 
         {
-            return Ok(await _providerService.GetRewardsById(id));
+            return Ok(await _institutionService.GetRewardsById(id));
         }
 
         /// <summary>
-        /// Get Provider Service
+        /// Get Institution Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns>IEnumerable SocialServiceModel</returns>
         [HttpGet("{id}/Services")]
         public async Task<ActionResult<IEnumerable<SocialServiceModel>>> GetServices(Guid id) 
         {
-            return Ok(await _providerService.GetSocialServicesById(id));
+            return Ok(await _institutionService.GetSocialServicesById(id));
         }
 
     }

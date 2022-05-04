@@ -92,7 +92,7 @@ namespace Mu3een.Controllers
         /// <summary>
         /// Get Social Services
         /// </summary>
-        /// <param name="id">provider id</param>
+        /// <param name="id">institution id</param>
         /// <param name="socialServiceId">socialServiceId Id</param>
         /// <returns></returns>
         [HttpPost("{id}/SetCompletedServices")]
@@ -105,7 +105,7 @@ namespace Mu3een.Controllers
         /// <summary>
         /// Get ExChangePoints of volanter with reward
         /// </summary>
-        /// <param name="id">provider id</param>
+        /// <param name="id">institution id</param>
         /// <param name="socialServiceId">socialServiceId Id</param>
         /// <returns></returns>
         [HttpPost("{id}/ExChangePoints")]
@@ -118,7 +118,7 @@ namespace Mu3een.Controllers
         /// <summary>
         /// Get ExChangePoints of volanter with reward
         /// </summary>
-        /// <param name="id">provider id</param>
+        /// <param name="id">institution id</param>
         /// <param name="socialServiceId">socialServiceId Id</param>
         /// <returns></returns>
         [HttpPut("{id}")]

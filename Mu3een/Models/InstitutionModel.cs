@@ -2,19 +2,19 @@
 
 namespace Mu3een.Models
 {
-    public class ProviderModel
+    public class InstitutionModel
     {
-        public ProviderModel()
+        public InstitutionModel()
         {
 
         }
-        public ProviderModel(Provider provider)
+        public InstitutionModel(Institution institution)
         {
-            Id = provider.Id;
-            Name = provider.Name;
-            Phone = provider.Phone;
-            Email = provider.Email;
-            ImageUrl = provider.ImageUrl;
+            Id = institution.Id;
+            Name = institution.Name;
+            Phone = institution.Phone;
+            Email = institution.Email;
+            ImageUrl = institution.ImageUrl;
         }
         public Guid? Id { get; set; }
         public string? Name { get; set; }

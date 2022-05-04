@@ -33,7 +33,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<ISocialServiceTypeService, SocialServiceTypeService>();
     services.AddScoped<ISocialServiceService, SocialServiceService>();
     services.AddScoped<IVolunteerService, VolunteerService>();
-    services.AddScoped<IProviderService, ProviderService>();
+    services.AddScoped<IInstitutionService, InstitutionService>();
     services.AddScoped<IRewardService, RewardService>();
 }
 

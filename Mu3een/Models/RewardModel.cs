@@ -17,7 +17,7 @@ namespace Mu3een.Models
             ImageUrl = model.ImageUrl;
             Points = model.Points;
             Numbers = model.Numbers;
-            Provider = model.Provider != null ? new ProviderModel(model.Provider):null;
+            Institution = model.Institution != null ? new InstitutionModel(model.Institution):null;
             CreatedAt = model.CreatedAt;
         }
         public Guid Id { get; set; }
@@ -26,7 +26,7 @@ namespace Mu3een.Models
         public string? ImageUrl { get; set; }
         public int? Points { get; set; }
         public int? Numbers { get; set; }
-        public ProviderModel? Provider { get; set; }
+        public InstitutionModel? Institution { get; set; }
         public DateTime? CreatedAt { get; set; }
 
     }

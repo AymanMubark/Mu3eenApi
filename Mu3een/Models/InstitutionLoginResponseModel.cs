@@ -1,8 +1,8 @@
 ﻿namespace Mu3een.Models
 {
-    public class ProviderLoginResponseModel
+    public class InstitutionLoginResponseModel
     {
-        public ProviderModel? User { get; set; }
+        public InstitutionModel? User { get; set; }
         public string? Token { get; set; }
         public string? Role { get; set; }
     }

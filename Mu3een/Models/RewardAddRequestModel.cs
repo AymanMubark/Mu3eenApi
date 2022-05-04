@@ -3,7 +3,7 @@
 
     public class RewardAddRequestModel
     {
-        public Guid? ProviderId { get; set; }
+        public Guid? InstitutionId { get; set; }
         public string? Name { get; set; }
         public string? Content { get; set; }
         public IFormFile? Image { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Mu3een.Models
 {
-    public class ProviderRegisterModel
+    public class InstitutionRegisterModel
     {
         public string? Name { get; set; }
         public string? Email { get; set; }

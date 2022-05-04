@@ -35,7 +35,7 @@ namespace Mu3een.Services
 
             var Reward = await _db.Rewards.AddAsync(new Reward
             {
-                ProviderId = model.ProviderId,
+                InstitutionId = model.InstitutionId,
                 Name = model.Name,
                 Content = model.Content,
                 Numbers = model.Numbers,

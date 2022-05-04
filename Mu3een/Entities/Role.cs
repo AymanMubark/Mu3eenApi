@@ -2,6 +2,6 @@
 {
     public enum Role
     {
-       Admin,Provider, Volunteer
+       Admin,Institution, Volunteer
     }
 }
