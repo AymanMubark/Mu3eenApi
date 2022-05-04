@@ -113,6 +113,19 @@ namespace Mu3een.Controllers
         {
             await _volunteerService.ExChangePoints(id, rewardId);
             return Ok();
+        }      
+        
+        /// <summary>
+        /// Get ExChangePoints of volanter with reward
+        /// </summary>
+        /// <param name="id">provider id</param>
+        /// <param name="socialServiceId">socialServiceId Id</param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<VolunteerModel>> Put(Guid id,VolunteerRegisterRequestModel model)
+        {
+            await _volunteerService.Register(id, model);
+            return Ok();
         }
 
     }

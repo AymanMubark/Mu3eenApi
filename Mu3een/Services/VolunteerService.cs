@@ -13,6 +13,7 @@ namespace Mu3een.Services
         public Task ApplyToService(Guid volunteerId, Guid socialServiceId);
         public Task<VerifyOTPResponseModel> VerifyOTP(string phone, string otp);
         public Task<VolunteerModel> GetVolunteerById(Guid id);
+        public Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel  model);
         public Task<IEnumerable<VolunteerRewardModel>> GetRewardsById(Guid id);
         public Task<IEnumerable<VolunteerServiceModel>> GetSocialServicesById(Guid id);
         public Task<Volunteer> GetById(Guid id);
@@ -164,5 +165,13 @@ namespace Mu3een.Services
             }
         }
 
+        public async Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel model)
+        {
+            var volunteer =  await GetById(id);
+            volunteer.Name = model.Name;    
+            _db.Update(volunteer);
+            await _db.SaveChangesAsync();
+            return new VolunteerModel(volunteer);
+        }
     }
 }
