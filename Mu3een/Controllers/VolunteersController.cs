@@ -124,8 +124,8 @@ namespace Mu3een.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<VolunteerModel>> Put(Guid id,VolunteerRegisterRequestModel model)
         {
-            await _volunteerService.Register(id, model);
-            return Ok();
+          
+            return Ok(await _volunteerService.Register(id, model));
         }
 
     }
