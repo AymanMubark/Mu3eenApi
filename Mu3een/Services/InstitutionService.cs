@@ -12,7 +12,7 @@ namespace Mu3een.Services
         public Task<InstitutionLoginResponseModel> Login(string email, string password);
         public Task<InstitutionLoginResponseModel> Register(InstitutionRegisterModel model, string baseUrl);
         public Task<IEnumerable<RewardModel>> GetRewardsById(Guid id);
-        public Task<IEnumerable<SocialServiceModel>> GetSocialServicesById(Guid id);
+        public Task<IEnumerable<SocialEventModel>> GetSocialEventsById(Guid id);
         public Task<InstitutionModel> GetInstitutionById(Guid id);
         public Task<Institution> GetById(Guid id);
     }
@@ -71,9 +71,9 @@ namespace Mu3een.Services
                 Name = model.Name,
                 Email = model.Email,
                 Password = model.Password,
-                ImageUrl = image,
                 Role = Role.Institution,
                 Phone =model.Phone,
+                ImageUrl = image,
             };
             await _db.Institutions.AddAsync(institution);
             await _db.SaveChangesAsync();
@@ -84,9 +84,9 @@ namespace Mu3een.Services
         {
             return await _db.Rewards.Where(x => x.InstitutionId == id).Select(x => new RewardModel(x)).ToListAsync();
         }
-        public async Task<IEnumerable<SocialServiceModel>> GetSocialServicesById(Guid id)
+        public async Task<IEnumerable<SocialEventModel>> GetSocialEventsById(Guid id)
         {
-            return await _db.SocialServices.Where(x => x.InstitutionId == id).Select(x => new SocialServiceModel(x)).ToListAsync();
+            return await _db.SocialEvents.Where(x => x.InstitutionId == id).Select(x => new SocialEventModel(x)).ToListAsync();
         }
     }
 }

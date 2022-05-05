@@ -7,50 +7,50 @@ namespace Mu3een.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SocialServicesController : ControllerBase
+    public class SocialEventsController : ControllerBase
     {
-        private readonly SocialServiceService _SocialServiceService;
+        private readonly SocialEventService _SocialEventService;
         private readonly IHttpContextAccessor _contextAccessor;
         private string baseUrl;
 
-        public SocialServicesController(SocialServiceService SocialServiceService, IHttpContextAccessor contextAccessor)
+        public SocialEventsController(SocialEventService SocialEventService, IHttpContextAccessor contextAccessor)
         {
-            _SocialServiceService = SocialServiceService;
+            _SocialEventService = SocialEventService;
             _contextAccessor = contextAccessor;
             var request = _contextAccessor.HttpContext!.Request;
             baseUrl = $"{request.Scheme}://{request.Host}";
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromForm] SocialServiceAddRequestModel model)
+        public async Task<ActionResult> Post([FromForm] SocialEventAddRequestModel model)
         {
-            await _SocialServiceService.Add(model, baseUrl);
+            await _SocialEventService.Add(model, baseUrl);
             return Ok();
         }
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SocialServiceModel>>> Get()
+        public async Task<ActionResult<IEnumerable<SocialEventModel>>> Get()
         {
-            return Ok(await _SocialServiceService.GetAll());
+            return Ok(await _SocialEventService.GetAll());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<SocialServiceModel>> Get(Guid id)
+        public async Task<ActionResult<SocialEventModel>> Get(Guid id)
         {
-            return Ok(await _SocialServiceService.GetSocialServiceById(id));
+            return Ok(await _SocialEventService.GetSocialEventById(id));
         }
 
         [HttpGet("{id}/Volunteers")]
         public async Task<ActionResult<IEnumerable<VolunteerModel>>> GetServicesVolunteersById(Guid id)
         {
-            return Ok(await _SocialServiceService.GetServicesVolunteersById(id));
+            return Ok(await _SocialEventService.GetServicesVolunteersById(id));
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            await _SocialServiceService.Delete(id);
+            await _SocialEventService.Delete(id);
             return Ok();
         }
 

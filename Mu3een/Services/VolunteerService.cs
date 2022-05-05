@@ -10,15 +10,15 @@ namespace Mu3een.Services
     public interface IVolunteerService
     {
         public Task<string> Login(string phone);
-        public Task ApplyToService(Guid volunteerId, Guid socialServiceId);
+        public Task ApplyToService(Guid volunteerId, Guid socialEventId);
         public Task<VerifyOTPResponseModel> VerifyOTP(string phone, string otp);
         public Task<VolunteerModel> GetVolunteerById(Guid id);
         public Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel  model);
         public Task<IEnumerable<VolunteerRewardModel>> GetRewardsById(Guid id);
-        public Task<IEnumerable<VolunteerServiceModel>> GetSocialServicesById(Guid id);
+        public Task<IEnumerable<VolunteerServiceModel>> GetSocialEventsById(Guid id);
         public Task<Volunteer> GetById(Guid id);
         public Task<Volunteer?> GetByPhone(string phone);
-        public Task SetCompletedServices(Guid id, Guid socialServiceId);
+        public Task SetCompletedServices(Guid id, Guid socialEventId);
         public Task ExChangePoints(Guid id, Guid rewardId);
     }
 
@@ -91,42 +91,42 @@ namespace Mu3een.Services
             return await _db.VolunteerRewards.Where(x => x.VolunteerId == id).Select(x => new VolunteerRewardModel(x)).ToListAsync();
         }
 
-        public async Task<IEnumerable<VolunteerServiceModel>> GetSocialServicesById(Guid id)
+        public async Task<IEnumerable<VolunteerServiceModel>> GetSocialEventsById(Guid id)
         {
-            return await _db.VolunteerSocialServices.Where(x => x.VolunteerId == id).Select(x => new VolunteerServiceModel(x)).ToListAsync();
+            return await _db.VolunteerSocialEvents.Where(x => x.VolunteerId == id).Select(x => new VolunteerServiceModel(x)).ToListAsync();
         }
 
-        public async Task ApplyToService(Guid volunteerId, Guid socialServiceId)
+        public async Task ApplyToService(Guid volunteerId, Guid socialEventId)
         {
-            var service = _db.VolunteerSocialServices.SingleOrDefaultAsync(x => x.VolunteerId == volunteerId && x.SocialServiceId == socialServiceId);
+            var service = _db.VolunteerSocialEvents.SingleOrDefaultAsync(x => x.VolunteerId == volunteerId && x.SocialEventId == socialEventId);
             if (service == null)
             {
-                await _db.VolunteerSocialServices.AddAsync(new VolunteerSocialService()
+                await _db.VolunteerSocialEvents.AddAsync(new VolunteerSocialEvent()
                 {
                     VolunteerId = volunteerId,
-                    SocialServiceId = socialServiceId,
+                    SocialEventId = socialEventId,
                 });
                 await _db.SaveChangesAsync();
             }
         }
 
-        public async Task SetCompletedServices(Guid id, Guid socialServiceId)
+        public async Task SetCompletedServices(Guid id, Guid socialEventId)
         {
-            VolunteerSocialService? volunteerSocialService = await _db.VolunteerSocialServices.SingleOrDefaultAsync(x => x.SocialServiceId == socialServiceId && x.VolunteerId == id);
-            if (volunteerSocialService != null)
+            VolunteerSocialEvent? volunteerSocialEvent = await _db.VolunteerSocialEvents.SingleOrDefaultAsync(x => x.SocialEventId == socialEventId && x.VolunteerId == id);
+            if (volunteerSocialEvent != null)
             {
-                if (!volunteerSocialService.Completed)
+                if (!volunteerSocialEvent.Completed)
                 {
-                    SocialService? socialService = await _db.SocialServices.FindAsync(id);
-                    if (socialService != null)
+                    SocialEvent? socialEvent = await _db.SocialEvents.FindAsync(id);
+                    if (socialEvent != null)
                     {
 
                         Volunteer? volunteer = await GetById(id);
-                        volunteer.Points += socialService.Points;
+                        volunteer.Points += socialEvent.Points;
                         _db.Volunteers.Update(volunteer);
 
-                        volunteerSocialService.Completed = true;
-                        _db.VolunteerSocialServices.Update(volunteerSocialService);
+                        volunteerSocialEvent.Completed = true;
+                        _db.VolunteerSocialEvents.Update(volunteerSocialEvent);
 
                         await _db.SaveChangesAsync();
                     }

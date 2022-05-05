@@ -18,10 +18,10 @@ namespace Mu3een.Data
         public DbSet<Region> Regions { get; set; }
         public DbSet<Volunteer> Volunteers { get; set; }
         public DbSet<Institution> Institutions { get; set; }
-        public DbSet<SocialServiceType> SocialServiceTypes { get; set; }
-        public DbSet<SocialService> SocialServices { get; set; }
+        public DbSet<SocialEventType> SocialEventTypes { get; set; }
+        public DbSet<SocialEvent> SocialEvents { get; set; }
         public DbSet<Reward> Rewards { get; set; }
-        public DbSet<VolunteerSocialService> VolunteerSocialServices { get; set; }
+        public DbSet<VolunteerSocialEvent> VolunteerSocialEvents { get; set; }
         public DbSet<VolunteerReward> VolunteerRewards { get; set; }
     }
 }

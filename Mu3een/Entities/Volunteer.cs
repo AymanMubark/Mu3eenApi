@@ -18,7 +18,7 @@ namespace Mu3een.Entities
         public Gender? Gender { get; set; }
         public int? Age { get; set; }
         public int Points { get; set; } = 0;
-        public virtual ICollection<VolunteerSocialService>? Services { get; set; }
+        public virtual ICollection<VolunteerSocialEvent>? Services { get; set; }
         public virtual ICollection<VolunteerReward>? Rewards { get; set; }
     }
 }

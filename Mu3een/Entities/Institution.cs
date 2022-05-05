@@ -8,7 +8,7 @@
         }
         public string? Phone { get; set; }
         public string? Password { get; set; }
-        public virtual ICollection<SocialService>? SocialServices { get; set; }
+        public virtual ICollection<SocialEvent>? SocialEvents { get; set; }
       
     }
 }

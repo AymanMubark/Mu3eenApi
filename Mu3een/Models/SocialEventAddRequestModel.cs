@@ -1,10 +1,10 @@
 ﻿namespace Mu3een.Models
 {
-    public class SocialServiceAddRequestModel
+    public class SocialEventAddRequestModel
     {
         public string? Name { get; set; }
         public Guid? InstitutionId { get; set; }
-        public Guid? SocialServiceTypeId { get; set; }
+        public Guid? SocialEventTypeId { get; set; }
         public Guid? RegionId { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public int? VolunteerRequried { get; set; }

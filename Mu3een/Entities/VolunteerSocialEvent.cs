@@ -2,14 +2,14 @@
 
 namespace Mu3een.Entities
 {
-    public class VolunteerSocialService : Base
+    public class VolunteerSocialEvent : Base
     {
         [Column("VolunteerId")]
         public Guid? VolunteerId { get; set; }
         public Volunteer? Volunteer { get; set; }
-        [Column("SocialServiceId")]
-        public Guid? SocialServiceId { get; set; }
-        public SocialService? SocialService { get; set; }
+        [Column("SocialEventId")]
+        public Guid? SocialEventId { get; set; }
+        public SocialEvent? SocialEvent { get; set; }
         public bool Completed { get; set; } = false;
     }
 }

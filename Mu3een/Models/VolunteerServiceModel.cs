@@ -8,13 +8,13 @@ namespace Mu3een.Models
         {
 
         }  
-        public VolunteerServiceModel(VolunteerSocialService model)
+        public VolunteerServiceModel(VolunteerSocialEvent model)
         {
-            SocialService =new SocialServiceModel(model.SocialService!);
+            SocialEvent =new SocialEventModel(model.SocialEvent!);
             Completed = model.Completed;
             CreatedAt = model.CreatedAt;
         }
-        public SocialServiceModel? SocialService { get; set; }
+        public SocialEventModel? SocialEvent { get; set; }
         public DateTime? CreatedAt { get; set; }
         public bool Completed { get; set; }
     }

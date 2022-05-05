@@ -2,16 +2,16 @@
 
 namespace Mu3een.Entities
 {
-    public class SocialService : Base
+    public class SocialEvent : Base
     {
         public string? Name { get; set; }
         [Column("InstitutionId")]
         public Guid? InstitutionId { get; set; }
         public Institution? Institution { get; set; }    
 
-        [Column("SocialServiceTypeId")]
-        public Guid? SocialServiceTypeId { get; set; }
-        public SocialServiceType? SocialServiceType { get; set; }   
+        [Column("SocialEventTypeId")]
+        public Guid? SocialEventTypeId { get; set; }
+        public SocialEventType? SocialEventType { get; set; }   
         [Column("RegionId")]
         public Guid? RegionId { get; set; }
         public Region? Region { get; set; }
