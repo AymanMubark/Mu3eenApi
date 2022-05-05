@@ -5,6 +5,7 @@ namespace Mu3een.Entities
     public class SocialEvent : Base
     {
         public string? Name { get; set; }
+        public string? Description { get; set; }
         [Column("InstitutionId")]
         public Guid? InstitutionId { get; set; }
         public Institution? Institution { get; set; }    

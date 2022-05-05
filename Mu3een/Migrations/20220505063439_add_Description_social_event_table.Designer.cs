@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Mu3een.Data;
 
@@ -11,9 +12,10 @@ using Mu3een.Data;
 namespace Mu3een.Migrations
 {
     [DbContext(typeof(Mu3eenContext))]
-    partial class Mu3eenContextModelSnapshot : ModelSnapshot
+    [Migration("20220505063439_add_Description_social_event_table")]
+    partial class add_Description_social_event_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,9 +34,6 @@ namespace Mu3een.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NameAr")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Status")
@@ -164,9 +163,6 @@ namespace Mu3een.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NameAr")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Status")

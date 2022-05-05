@@ -3,5 +3,6 @@
     public class Region : Base
     {
         public string? Name { get; set; }
+        public string? NameAr { get; set; }
     }
 }

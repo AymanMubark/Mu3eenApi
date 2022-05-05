@@ -11,6 +11,7 @@ namespace Mu3een.Models
         public SocialEventModel(SocialEvent model)
         {
             Name = model.Name;
+            Description = model.Description;
             Institution = new InstitutionModel(model.Institution!);
             SocialEventType = new SocialEventTypeModel(model.SocialEventType!);
             Region = new RegionModel(model.Region!);
@@ -23,6 +24,7 @@ namespace Mu3een.Models
             CreatedAt = model.CreatedAt;
         }
         public string? Id { get; set; }
+        public string? Description { get; set; }
         public string? Name { get; set; }
         public InstitutionModel? Institution { get; set; }
         public SocialEventTypeModel? SocialEventType { get; set; }

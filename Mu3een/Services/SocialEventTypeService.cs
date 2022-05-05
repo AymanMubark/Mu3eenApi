@@ -8,8 +8,8 @@ namespace Mu3een.Services
     {
         public Task<IEnumerable<SocialEventType>> GetAll();
         public Task<SocialEventType> GetById(Guid id);
-        public Task Add(string Name);
-        public Task Update(Guid id,string Name);
+        public Task Add(SocialEventType model);
+        public Task Update(Guid id, SocialEventType model);
         public Task Delete(Guid id);
     }
     public class SocialEventTypeService : ISocialEventTypeService
@@ -21,9 +21,9 @@ namespace Mu3een.Services
             _db = db;
         }
 
-        public async Task Add(string Name)
+        public async Task Add(SocialEventType model)
         {
-           var SocialEventType = await _db.SocialEventTypes.AddAsync(new SocialEventType { Name = Name });
+            var SocialEventType = await _db.SocialEventTypes.AddAsync(new SocialEventType { Name = model.Name, NameAr = model.NameAr, });
             await _db.SaveChangesAsync();
         }
 
@@ -45,10 +45,11 @@ namespace Mu3een.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task Update(Guid id, string Name)
+        public async Task Update(Guid id, SocialEventType model)
         {
             SocialEventType? SocialEventType = await GetById(id);
-            SocialEventType.Name = Name;
+            SocialEventType.Name = model.Name;
+            SocialEventType.NameAr = model.NameAr;
             _db.Update(SocialEventType);
             _db.SaveChanges();
         }

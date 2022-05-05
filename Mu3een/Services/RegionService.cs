@@ -8,8 +8,8 @@ namespace Mu3een.Services
     {
         public Task<IEnumerable<Region>> GetAll();
         public Task<Region> GetById(Guid id);
-        public Task Add(string Name);
-        public Task Update(Guid id,string Name);
+        public Task Add(Region model);
+        public Task Update(Guid id, Region model);
         public Task Delete(Guid id);
     }
     public class RegionService : IRegionService
@@ -21,9 +21,9 @@ namespace Mu3een.Services
             _db = db;
         }
 
-        public async Task Add(string Name)
+        public async Task Add(Region model)
         {
-           var region = await _db.Regions.AddAsync(new Region { Name = Name });
+           var region = await _db.Regions.AddAsync(new Region { Name = model.Name, NameAr = model.NameAr});
             await _db.SaveChangesAsync();
         }
 
@@ -45,10 +45,11 @@ namespace Mu3een.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task Update(Guid id, string Name)
+        public async Task Update(Guid id, Region model)
         {
             Region? region = await GetById(id);
-            region.Name = Name;
+            region.Name = model.Name;
+            region.NameAr = model.NameAr;
             _db.Update(region);
             _db.SaveChanges();
         }

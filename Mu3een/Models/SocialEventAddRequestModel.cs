@@ -3,6 +3,7 @@
     public class SocialEventAddRequestModel
     {
         public string? Name { get; set; }
+        public string? Description { get; set; }
         public Guid? InstitutionId { get; set; }
         public Guid? SocialEventTypeId { get; set; }
         public Guid? RegionId { get; set; }

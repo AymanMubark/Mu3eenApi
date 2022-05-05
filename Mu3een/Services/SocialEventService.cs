@@ -40,6 +40,7 @@ namespace Mu3een.Services
                 ExpiryDate = model.ExpiryDate,
                 Latitude = model.Latitude,
                 Longitude = model.Longitude,
+                Description = model.Description,
                 InstitutionId = model.InstitutionId,
                 RegionId = model.RegionId,
                 SocialEventTypeId = model.SocialEventTypeId,

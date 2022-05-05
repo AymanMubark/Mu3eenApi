@@ -32,17 +32,17 @@ namespace Mu3een.Controllers
 
         // POST api/<RegionsController>
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] string name)
+        public async Task<ActionResult> Post(Region model)
         {
-            await _regionService.Add(name);
+            await _regionService.Add(model);
             return Ok();
         }
 
         // PUT api/<RegionsController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(Guid id, [FromBody] string value)
+        public async Task<ActionResult> Put(Guid id, Region model)
         {
-            await _regionService.Update(id, value);
+            await _regionService.Update(id, model);
             return Ok();
         }
 

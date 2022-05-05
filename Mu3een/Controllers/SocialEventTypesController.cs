@@ -33,17 +33,17 @@ namespace Mu3een.Controllers
 
         // POST api/<SocialEventTypesController>
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] string name)
+        public async Task<ActionResult> Post(SocialEventType model)
         {
-            await _SocialEventTypeService.Add(name);
+            await _SocialEventTypeService.Add(model);
             return Ok();
         }
 
         // PUT api/<SocialEventTypesController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(Guid id, [FromBody] string value)
+        public async Task<ActionResult> Put(Guid id, SocialEventType model)
         {
-            await _SocialEventTypeService.Update(id, value);
+            await _SocialEventTypeService.Update(id, model);
             return Ok();
         }
 
