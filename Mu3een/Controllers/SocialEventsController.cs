@@ -22,7 +22,7 @@ namespace Mu3een.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromForm] SocialEventAddRequestModel model)
+        public async Task<ActionResult> Post(SocialEventAddRequestModel model)
         {
             await _SocialEventService.Add(model, baseUrl);
             return Ok();

@@ -12,8 +12,8 @@ namespace Mu3een.Models
         {
             Name = model.Name;
             Institution = new InstitutionModel(model.Institution!);
-            SocialEventType = model.SocialEventType;
-            Region = model.Region;
+            SocialEventType = new SocialEventTypeModel(model.SocialEventType!);
+            Region = new RegionModel(model.Region!);
             VolunteerRequried = model.VolunteerRequried;
             Points = model.Points;
             ExpiryDate = model.ExpiryDate;
@@ -25,8 +25,8 @@ namespace Mu3een.Models
         public string? Id { get; set; }
         public string? Name { get; set; }
         public InstitutionModel? Institution { get; set; }
-        public SocialEventType? SocialEventType { get; set; }
-        public Region? Region { get; set; }
+        public SocialEventTypeModel? SocialEventType { get; set; }
+        public RegionModel? Region { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public int? VolunteerRequried { get; set; }
         public int? Points { get; set; }
