@@ -10,11 +10,12 @@ namespace Mu3een.Models
         }
         public SocialEventModel(SocialEvent model)
         {
+            Id = model.Id;
             Name = model.Name;
             Description = model.Description;
-            Institution = new InstitutionModel(model.Institution!);
+            InstitutionId = model.InstitutionId;
             SocialEventType = new SocialEventTypeModel(model.SocialEventType!);
-            Region = new RegionModel(model.Region!);
+            //Region = new RegionModel(model.Region!);
             VolunteerRequried = model.VolunteerRequried;
             Points = model.Points;
             ExpiryDate = model.ExpiryDate;
@@ -23,10 +24,10 @@ namespace Mu3een.Models
             Longitude = model.Longitude;
             CreatedAt = model.CreatedAt;
         }
-        public string? Id { get; set; }
+        public Guid? Id { get; set; }
         public string? Description { get; set; }
         public string? Name { get; set; }
-        public InstitutionModel? Institution { get; set; }
+        public Guid? InstitutionId { get; set; }
         public SocialEventTypeModel? SocialEventType { get; set; }
         public RegionModel? Region { get; set; }
         public DateTime? ExpiryDate { get; set; }

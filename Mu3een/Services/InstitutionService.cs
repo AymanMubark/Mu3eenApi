@@ -86,7 +86,7 @@ namespace Mu3een.Services
         }
         public async Task<IEnumerable<SocialEventModel>> GetSocialEventsById(Guid id)
         {
-            return await _db.SocialEvents.Where(x => x.InstitutionId == id).Select(x => new SocialEventModel(x)).ToListAsync();
+            return await _db.SocialEvents.Include(x=>x.SocialEventType).Where(x => x.InstitutionId == id).Select(x => new SocialEventModel(x)).ToListAsync();
         }
     }
 }
