@@ -7,7 +7,8 @@ namespace Mu3een.Entities
         public string? Name { get; set; }
         public string? Content { get; set; }
         public string? ImageUrl { get; set; }
-        public int Points { get; set; }
+        public int Points { get; set; } = 0;
+        public DateTime? ExpiryDate { get; set; }
         public int? Numbers { get; set; }
         [Column("InstitutionId")]
         public Guid? InstitutionId { get; set; }

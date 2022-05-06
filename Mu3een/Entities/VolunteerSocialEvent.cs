@@ -16,6 +16,6 @@ namespace Mu3een.Entities
         [Column("SocialEventId")]
         public Guid? SocialEventId { get; set; }
         public SocialEvent? SocialEvent { get; set; }
-        public VolunteerSocialEventStatus? Status { get; set; } = VolunteerSocialEventStatus.Request;
+        public VolunteerSocialEventStatus? VolunteerStatus { get; set; } = VolunteerSocialEventStatus.Request;
     }
 }

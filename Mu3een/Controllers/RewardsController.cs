@@ -22,6 +22,7 @@ namespace Mu3een.Controllers
         }
 
         [HttpPost]
+        [RequestSizeLimit(long.MaxValue)]
         public async Task<ActionResult> Post([FromForm] RewardAddRequestModel model)
         {
             await _rewardService.Add(model, baseUrl);

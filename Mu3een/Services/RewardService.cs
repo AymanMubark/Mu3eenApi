@@ -40,7 +40,8 @@ namespace Mu3een.Services
                 Content = model.Content,
                 Numbers = model.Numbers,
                 Points = model.Points,
-                ImageUrl = image
+                ImageUrl = image,
+                ExpiryDate = model.ExpiryDate,
             });
             await _db.SaveChangesAsync();
         }

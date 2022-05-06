@@ -15,7 +15,7 @@ namespace Mu3een.Services
         public Task<VolunteerModel> GetVolunteerById(Guid id);
         public Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel  model);
         public Task<IEnumerable<VolunteerRewardModel>> GetRewardsById(Guid id);
-        public Task<IEnumerable<VolunteerServiceModel>> GetSocialEventsById(Guid id);
+        public Task<IEnumerable<Models.VolunteerSocialEventModel>> GetSocialEventsById(Guid id);
         public Task<Volunteer> GetById(Guid id);
         public Task<Volunteer?> GetByPhone(string phone);
         public Task SetCompleted(Guid id, Guid socialEventId);
@@ -92,9 +92,9 @@ namespace Mu3een.Services
             return await _db.VolunteerRewards.Where(x => x.VolunteerId == id).Select(x => new VolunteerRewardModel(x)).ToListAsync();
         }
 
-        public async Task<IEnumerable<VolunteerServiceModel>> GetSocialEventsById(Guid id)
+        public async Task<IEnumerable<Models.VolunteerSocialEventModel>> GetSocialEventsById(Guid id)
         {
-            return await _db.VolunteerSocialEvents.Where(x => x.VolunteerId == id).Select(x => new VolunteerServiceModel(x)).ToListAsync();
+            return await _db.VolunteerSocialEvents.Where(x => x.VolunteerId == id).Select(x => new VolunteerSocialEventModel(x)).ToListAsync();
         }
 
         public async Task ApplyToService(Guid volunteerId, Guid socialEventId)
@@ -102,7 +102,7 @@ namespace Mu3een.Services
             var service = _db.VolunteerSocialEvents.SingleOrDefaultAsync(x => x.VolunteerId == volunteerId && x.SocialEventId == socialEventId);
             if (service == null)
             {
-                await _db.VolunteerSocialEvents.AddAsync(new VolunteerSocialEvent()
+                await _db.VolunteerSocialEvents.AddAsync(new Entities.VolunteerSocialEvent()
                 {
                     VolunteerId = volunteerId,
                     SocialEventId = socialEventId,
@@ -113,7 +113,7 @@ namespace Mu3een.Services
 
         public async Task SetCompleted(Guid id, Guid socialEventId)
         {
-            VolunteerSocialEvent? volunteerSocialEvent = await _db.VolunteerSocialEvents.SingleOrDefaultAsync(x => x.SocialEventId == socialEventId && x.VolunteerId == id);
+            Entities.VolunteerSocialEvent? volunteerSocialEvent = await _db.VolunteerSocialEvents.SingleOrDefaultAsync(x => x.SocialEventId == socialEventId && x.VolunteerId == id);
             if (volunteerSocialEvent != null)
             {
                 SocialEvent? socialEvent = await _db.SocialEvents.FindAsync(id);
@@ -124,7 +124,7 @@ namespace Mu3een.Services
                         volunteer.Points += socialEvent.Points;
                         _db.Volunteers.Update(volunteer);
 
-                        volunteerSocialEvent.Status = VolunteerSocialEventStatus.Complete;
+                        volunteerSocialEvent.VolunteerStatus = VolunteerSocialEventStatus.Complete;
                         _db.VolunteerSocialEvents.Update(volunteerSocialEvent);
 
                         await _db.SaveChangesAsync();
@@ -135,13 +135,13 @@ namespace Mu3een.Services
 
         public async Task SetAccept(Guid id, Guid socialEventId)
         {
-            VolunteerSocialEvent? volunteerSocialEvent = await _db.VolunteerSocialEvents.SingleOrDefaultAsync(x => x.SocialEventId == socialEventId && x.VolunteerId == id);
+            Entities.VolunteerSocialEvent? volunteerSocialEvent = await _db.VolunteerSocialEvents.SingleOrDefaultAsync(x => x.SocialEventId == socialEventId && x.VolunteerId == id);
             if (volunteerSocialEvent != null)
             {
                 SocialEvent? socialEvent = await _db.SocialEvents.FindAsync(id);
                     if (socialEvent != null)
                     {
-                        volunteerSocialEvent.Status = VolunteerSocialEventStatus.Accept;
+                        volunteerSocialEvent.VolunteerStatus = VolunteerSocialEventStatus.Accept;
                         _db.VolunteerSocialEvents.Update(volunteerSocialEvent);
                         await _db.SaveChangesAsync();
                     }
