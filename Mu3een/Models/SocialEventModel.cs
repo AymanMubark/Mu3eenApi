@@ -23,6 +23,7 @@ namespace Mu3een.Models
             Latitude = model.Latitude;
             Longitude = model.Longitude;
             CreatedAt = model.CreatedAt;
+            imageUrl = model.ImageUrl;
         }
         public Guid? Id { get; set; }
         public string? Description { get; set; }
@@ -34,6 +35,7 @@ namespace Mu3een.Models
         public int? VolunteerRequried { get; set; }
         public int? Points { get; set; }
         public string? Address { get; set; }
+        public string? imageUrl { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
