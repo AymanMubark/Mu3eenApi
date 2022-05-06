@@ -9,11 +9,11 @@ namespace Mu3een.Controllers
     [ApiController]
     public class SocialEventsController : ControllerBase
     {
-        private readonly SocialEventService _SocialEventService;
+        private readonly ISocialEventService _SocialEventService;
         private readonly IHttpContextAccessor _contextAccessor;
         private string baseUrl;
 
-        public SocialEventsController(SocialEventService SocialEventService, IHttpContextAccessor contextAccessor)
+        public SocialEventsController(ISocialEventService SocialEventService, IHttpContextAccessor contextAccessor)
         {
             _SocialEventService = SocialEventService;
             _contextAccessor = contextAccessor;
