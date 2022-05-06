@@ -2,6 +2,12 @@
 
 namespace Mu3een.Entities
 {
+    public enum VolunteerSocialEventStatus
+    {
+        Request,
+        Accept,
+        Complete,
+    }
     public class VolunteerSocialEvent : Base
     {
         [Column("VolunteerId")]
@@ -10,6 +16,6 @@ namespace Mu3een.Entities
         [Column("SocialEventId")]
         public Guid? SocialEventId { get; set; }
         public SocialEvent? SocialEvent { get; set; }
-        public bool Completed { get; set; } = false;
+        public VolunteerSocialEventStatus? Status { get; set; } = VolunteerSocialEventStatus.Request;
     }
 }

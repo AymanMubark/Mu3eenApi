@@ -10,12 +10,12 @@ namespace Mu3een.Models
         }  
         public VolunteerServiceModel(VolunteerSocialEvent model)
         {
-            SocialEvent =new SocialEventModel(model.SocialEvent!);
-            Completed = model.Completed;
-            CreatedAt = model.CreatedAt;
+            Id = model.Id;
+            Volunteer =new VolunteerModel(model.Volunteer!);
+            Status = model.Status;
         }
-        public SocialEventModel? SocialEvent { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public bool Completed { get; set; }
+        public Guid? Id { get; set; }
+        public VolunteerModel? Volunteer { get; set; }
+        public VolunteerSocialEventStatus? Status { get; set; }
     }
 }

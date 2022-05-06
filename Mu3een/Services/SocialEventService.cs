@@ -36,6 +36,7 @@ namespace Mu3een.Services
                 image = baseUrl + "/" + (await _filesHelper.UploadFile(model.Image));
             await _db.SocialEvents.AddAsync(new SocialEvent()
             {
+                Name = model.Name, 
                 Address = model.Address,
                 ExpiryDate = model.ExpiryDate,
                 Latitude = model.Latitude,

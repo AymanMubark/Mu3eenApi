@@ -95,10 +95,23 @@ namespace Mu3een.Controllers
         /// <param name="id">institution id</param>
         /// <param name="socialEventId">socialEventId Id</param>
         /// <returns></returns>
+        [HttpPost("{id}/SetAcceptEvent")]
+        public async Task<ActionResult> SetAcceptEvent(Guid id,[FromBody]Guid socialEventId)
+        {
+            await _volunteerService.SetAccept(id, socialEventId);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Get Social Services
+        /// </summary>
+        /// <param name="id">institution id</param>
+        /// <param name="socialEventId">socialEventId Id</param>
+        /// <returns></returns>
         [HttpPost("{id}/SetCompletedEvent")]
         public async Task<ActionResult> SetCompletedEvent(Guid id,[FromBody]Guid socialEventId)
         {
-            await _volunteerService.SetCompletedServices(id, socialEventId);
+            await _volunteerService.SetCompleted(id, socialEventId);
             return Ok();
         }
 

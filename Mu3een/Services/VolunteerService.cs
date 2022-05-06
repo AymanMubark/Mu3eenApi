@@ -18,7 +18,8 @@ namespace Mu3een.Services
         public Task<IEnumerable<VolunteerServiceModel>> GetSocialEventsById(Guid id);
         public Task<Volunteer> GetById(Guid id);
         public Task<Volunteer?> GetByPhone(string phone);
-        public Task SetCompletedServices(Guid id, Guid socialEventId);
+        public Task SetCompleted(Guid id, Guid socialEventId);
+        public Task SetAccept(Guid id, Guid socialEventId);
         public Task ExChangePoints(Guid id, Guid rewardId);
     }
 
@@ -110,14 +111,12 @@ namespace Mu3een.Services
             }
         }
 
-        public async Task SetCompletedServices(Guid id, Guid socialEventId)
+        public async Task SetCompleted(Guid id, Guid socialEventId)
         {
             VolunteerSocialEvent? volunteerSocialEvent = await _db.VolunteerSocialEvents.SingleOrDefaultAsync(x => x.SocialEventId == socialEventId && x.VolunteerId == id);
             if (volunteerSocialEvent != null)
             {
-                if (!volunteerSocialEvent.Completed)
-                {
-                    SocialEvent? socialEvent = await _db.SocialEvents.FindAsync(id);
+                SocialEvent? socialEvent = await _db.SocialEvents.FindAsync(id);
                     if (socialEvent != null)
                     {
 
@@ -125,12 +124,28 @@ namespace Mu3een.Services
                         volunteer.Points += socialEvent.Points;
                         _db.Volunteers.Update(volunteer);
 
-                        volunteerSocialEvent.Completed = true;
+                        volunteerSocialEvent.Status = VolunteerSocialEventStatus.Complete;
                         _db.VolunteerSocialEvents.Update(volunteerSocialEvent);
 
                         await _db.SaveChangesAsync();
                     }
-                }
+                
+            }
+        } 
+
+        public async Task SetAccept(Guid id, Guid socialEventId)
+        {
+            VolunteerSocialEvent? volunteerSocialEvent = await _db.VolunteerSocialEvents.SingleOrDefaultAsync(x => x.SocialEventId == socialEventId && x.VolunteerId == id);
+            if (volunteerSocialEvent != null)
+            {
+                SocialEvent? socialEvent = await _db.SocialEvents.FindAsync(id);
+                    if (socialEvent != null)
+                    {
+                        volunteerSocialEvent.Status = VolunteerSocialEventStatus.Accept;
+                        _db.VolunteerSocialEvents.Update(volunteerSocialEvent);
+                        await _db.SaveChangesAsync();
+                    }
+                
             }
         }
 
