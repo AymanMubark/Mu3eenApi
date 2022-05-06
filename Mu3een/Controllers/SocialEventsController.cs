@@ -22,6 +22,7 @@ namespace Mu3een.Controllers
         }
 
         [HttpPost]
+        [RequestSizeLimit(long.MaxValue)]
         public async Task<ActionResult> Post([FromForm] SocialEventAddRequestModel model)
         {
             await _SocialEventService.Add(model, baseUrl);

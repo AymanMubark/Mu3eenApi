@@ -82,8 +82,8 @@ namespace Mu3een.Controllers
         /// </summary>
         /// <param name="id">volunteer Id</param>
         /// <returns></returns>
-        [HttpPost("{id}/ApplyToService")]
-        public async Task<ActionResult> ApplyToService(Guid id,[FromBody]Guid socialEventId)
+        [HttpPost("{id}/ApplyToEvent")]
+        public async Task<ActionResult> ApplyToEvent(Guid id,[FromBody]Guid socialEventId)
         {
             await _volunteerService.ApplyToService(id, socialEventId);
             return Ok();
@@ -95,8 +95,8 @@ namespace Mu3een.Controllers
         /// <param name="id">institution id</param>
         /// <param name="socialEventId">socialEventId Id</param>
         /// <returns></returns>
-        [HttpPost("{id}/SetCompletedServices")]
-        public async Task<ActionResult> SetCompletedServices(Guid id,[FromBody]Guid socialEventId)
+        [HttpPost("{id}/SetCompletedEvent")]
+        public async Task<ActionResult> SetCompletedEvent(Guid id,[FromBody]Guid socialEventId)
         {
             await _volunteerService.SetCompletedServices(id, socialEventId);
             return Ok();
