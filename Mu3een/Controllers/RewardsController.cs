@@ -9,11 +9,11 @@ namespace Mu3een.Controllers
     [ApiController]
     public class RewardsController : ControllerBase
     {
-        private readonly RewardService _rewardService;
+        private readonly IRewardService _rewardService;
         private readonly IHttpContextAccessor _contextAccessor;
         private string baseUrl;
 
-        public RewardsController(RewardService rewardService, IHttpContextAccessor contextAccessor)
+        public RewardsController(IRewardService rewardService, IHttpContextAccessor contextAccessor)
         {
             _rewardService = rewardService;
             _contextAccessor = contextAccessor;
