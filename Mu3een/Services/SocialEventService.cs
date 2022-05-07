@@ -83,7 +83,7 @@ namespace Mu3een.Services
 
         public async Task<IEnumerable<SocialEventVolunteerModel>> GetEventVolunteers(Guid id)
         {
-            return await _db.SocialEventVolunteers.Where(x => x.SocialEventId == id).Select(x => new SocialEventVolunteerModel(x)).ToListAsync();
+            return await _db.SocialEventVolunteers.Include(x=> x.Volunteer).Where(x => x.SocialEventId == id).Select(x => new SocialEventVolunteerModel(x)).ToListAsync();
         }
         public async Task ApplyToService(Guid id, Guid volunteerId)
         {
