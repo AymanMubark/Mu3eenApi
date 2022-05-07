@@ -8,7 +8,7 @@ namespace Mu3een.Entities
         Accept,
         Complete,
     }
-    public class VolunteerSocialEvent : Base
+    public class SocialEventVolunteer : Base
     {
         [Column("VolunteerId")]
         public Guid? VolunteerId { get; set; }

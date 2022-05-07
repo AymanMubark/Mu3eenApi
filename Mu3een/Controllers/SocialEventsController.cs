@@ -9,13 +9,13 @@ namespace Mu3een.Controllers
     [ApiController]
     public class SocialEventsController : ControllerBase
     {
-        private readonly ISocialEventService _SocialEventService;
+        private readonly ISocialEventService _socialEventService;
         private readonly IHttpContextAccessor _contextAccessor;
         private string baseUrl;
 
         public SocialEventsController(ISocialEventService SocialEventService, IHttpContextAccessor contextAccessor)
         {
-            _SocialEventService = SocialEventService;
+            _socialEventService = SocialEventService;
             _contextAccessor = contextAccessor;
             var request = _contextAccessor.HttpContext!.Request;
             baseUrl = $"{request.Scheme}://{request.Host}";
@@ -25,7 +25,7 @@ namespace Mu3een.Controllers
         [RequestSizeLimit(long.MaxValue)]
         public async Task<ActionResult> Post([FromForm] SocialEventAddRequestModel model)
         {
-            await _SocialEventService.Add(model, baseUrl);
+            await _socialEventService.Add(model, baseUrl);
             return Ok();
         }
 
@@ -33,25 +33,64 @@ namespace Mu3een.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SocialEventModel>>> Get()
         {
-            return Ok(await _SocialEventService.GetAll());
+            return Ok(await _socialEventService.GetAll());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<SocialEventModel>> Get(Guid id)
         {
-            return Ok(await _SocialEventService.GetSocialEventById(id));
+            return Ok(await _socialEventService.GetSocialEventById(id));
         }
 
         [HttpGet("{id}/Volunteers")]
         public async Task<ActionResult<IEnumerable<SocialEventVolunteerModel>>> GetEventVolunteers(Guid id)
         {
-            return Ok(await _SocialEventService.GetEventVolunteers(id));
+            return Ok(await _socialEventService.GetEventVolunteers(id));
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            await _SocialEventService.Delete(id);
+            await _socialEventService.Delete(id);
+            return Ok();
+        }
+
+
+        /// <summary>
+        /// Get Social Services
+        /// </summary>
+        /// <param name="id">volunteer Id</param>
+        /// <returns></returns>
+        [HttpPost("{id}/Apply")]
+        public async Task<ActionResult> ApplyToEvent(Guid id, [FromBody] Guid volunteerId)
+        {
+            await _socialEventService.ApplyToService(id, volunteerId);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Get Social Services
+        /// </summary>
+        /// <param name="id">institution id</param>
+        /// <param name="socialEventId">socialEventId Id</param>
+        /// <returns></returns>
+        [HttpPost("{id}/Accept")]
+        public async Task<ActionResult> SetAcceptEvent(Guid id, [FromBody] Guid volunteerId)
+        {
+            await _socialEventService.SetAccept(id, volunteerId);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Get Social Services
+        /// </summary>
+        /// <param name="id">institution id</param>
+        /// <param name="socialEventId">socialEventId Id</param>
+        /// <returns></returns>
+        [HttpPost("{id}/Complete")]
+        public async Task<ActionResult> SetCompletedEvent(Guid id, [FromBody] Guid volunteerId)
+        {
+            await _socialEventService.SetCompleted(id, volunteerId);
             return Ok();
         }
 

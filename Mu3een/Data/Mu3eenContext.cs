@@ -21,7 +21,7 @@ namespace Mu3een.Data
         public DbSet<SocialEventType> SocialEventTypes { get; set; }
         public DbSet<SocialEvent> SocialEvents { get; set; }
         public DbSet<Reward> Rewards { get; set; }
-        public DbSet<VolunteerSocialEvent> VolunteerSocialEvents { get; set; }
+        public DbSet<SocialEventVolunteer> SocialEventVolunteers { get; set; }
         public DbSet<VolunteerReward> VolunteerRewards { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Mu3een.Models
         {
 
         }  
-        public SocialEventVolunteerModel(VolunteerSocialEvent model)
+        public SocialEventVolunteerModel(SocialEventVolunteer model)
         {
             Id = model.Id;
             Volunteer =new VolunteerModel(model.Volunteer!);

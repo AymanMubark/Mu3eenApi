@@ -76,51 +76,7 @@ namespace Mu3een.Controllers
         {
             return Ok(await _volunteerService.GetSocialEventsById(id));
         } 
-        
-        /// <summary>
-        /// Get Social Services
-        /// </summary>
-        /// <param name="id">volunteer Id</param>
-        /// <returns></returns>
-        [HttpPost("{id}/ApplyToEvent")]
-        public async Task<ActionResult> ApplyToEvent(Guid id,[FromBody]Guid socialEventId)
-        {
-            await _volunteerService.ApplyToService(id, socialEventId);
-            return Ok();
-        }
 
-        /// <summary>
-        /// Get Social Services
-        /// </summary>
-        /// <param name="id">institution id</param>
-        /// <param name="socialEventId">socialEventId Id</param>
-        /// <returns></returns>
-        [HttpPost("{id}/SetAcceptEvent")]
-        public async Task<ActionResult> SetAcceptEvent(Guid id,[FromBody]Guid socialEventId)
-        {
-            await _volunteerService.SetAccept(id, socialEventId);
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get Social Services
-        /// </summary>
-        /// <param name="id">institution id</param>
-        /// <param name="socialEventId">socialEventId Id</param>
-        /// <returns></returns>
-        [HttpPost("{id}/SetCompletedEvent")]
-        public async Task<ActionResult> SetCompletedEvent(Guid id,[FromBody]Guid socialEventId)
-        {
-            await _volunteerService.SetCompleted(id, socialEventId);
-            return Ok();
-        }
-
-        /// <summary>
-        /// Get ExChangePoints of volanter with reward
-        /// </summary>
-        /// <param name="id">institution id</param>
-        /// <param name="socialEventId">socialEventId Id</param>
-        /// <returns></returns>
         [HttpPost("{id}/ExChangePoints")]
         public async Task<ActionResult> ExChangePoints(Guid id,[FromBody]Guid rewardId)
         {
@@ -128,12 +84,7 @@ namespace Mu3een.Controllers
             return Ok();
         }      
         
-        /// <summary>
-        /// Get ExChangePoints of volanter with reward
-        /// </summary>
-        /// <param name="id">institution id</param>
-        /// <param name="socialEventId">socialEventId Id</param>
-        /// <returns></returns>
+
         [HttpPut("{id}")]
         public async Task<ActionResult<VolunteerModel>> Put(Guid id,VolunteerRegisterRequestModel model)
         {
