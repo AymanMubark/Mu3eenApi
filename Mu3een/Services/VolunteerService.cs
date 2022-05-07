@@ -90,9 +90,9 @@ namespace Mu3een.Services
             return await _db.VolunteerRewards.Where(x => x.VolunteerId == id).Select(x => new VolunteerRewardModel(x)).ToListAsync();
         }
 
-        public async Task<IEnumerable<Models.SocialEventVolunteerModel>> GetSocialEventsById(Guid id)
+        public async Task<IEnumerable<SocialEventVolunteerModel>> GetSocialEventsById(Guid id)
         {
-            return await _db.SocialEventVolunteers.Where(x => x.VolunteerId == id).Select(x => new SocialEventVolunteerModel(x)).ToListAsync();
+            return await _db.SocialEventVolunteers.Include(x=>x.SocialEvent).Where(x => x.VolunteerId == id).Select(x => new SocialEventVolunteerModel(x)).ToListAsync();
         }
 
         public async Task ExChangePoints(Guid id, Guid rewardId)

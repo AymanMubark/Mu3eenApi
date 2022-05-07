@@ -12,10 +12,12 @@ namespace Mu3een.Models
         {
             Id = model.Id;
             Volunteer =new VolunteerModel(model.Volunteer!);
+            SocialEvent = new SocialEventModel(model.SocialEvent!);
             VolunteerStatus = model.VolunteerStatus;
         }
         public Guid? Id { get; set; }
         public VolunteerModel? Volunteer { get; set; }
+        public SocialEventModel? SocialEvent { get; set; }
         public VolunteerSocialEventStatus? VolunteerStatus { get; set; }
     }
 }
