@@ -11,8 +11,8 @@ namespace Mu3een.Models
         public SocialEventVolunteerModel(SocialEventVolunteer model)
         {
             Id = model.Id;
-            Volunteer =new VolunteerModel(model.Volunteer!);
-            SocialEvent = new SocialEventModel(model.SocialEvent!);
+            Volunteer = model.Volunteer ==null ?null: new VolunteerModel(model.Volunteer);
+            SocialEvent =model.SocialEvent ==null? null: new SocialEventModel(model.SocialEvent);
             VolunteerStatus = model.VolunteerStatus;
         }
         public Guid? Id { get; set; }
