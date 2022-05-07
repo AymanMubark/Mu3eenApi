@@ -10,7 +10,7 @@ namespace Mu3een.Services
     {
         public Task<IEnumerable<SocialEventModel>> GetAll();
         public Task<IEnumerable<SocialEventModel>> GetAllByInstitutionId(Guid id);
-        public Task<IEnumerable<Models.VolunteerSocialEventModel>> GetEventsVolunteersById(Guid id);
+        public Task<IEnumerable<VolunteerSocialEventModel>> GetEventVolunteers(Guid id);
         public Task<SocialEventModel> GetSocialEventById(Guid id);
         public Task<SocialEvent> GetById(Guid id);
         public Task Add(SocialEventAddRequestModel model, string baseUrl);
@@ -78,7 +78,7 @@ namespace Mu3een.Services
             return socialEvent;
         }
 
-        public async Task<IEnumerable<Models.VolunteerSocialEventModel>> GetEventsVolunteersById(Guid id)
+        public async Task<IEnumerable<VolunteerSocialEventModel>> GetEventVolunteers(Guid id)
         {
             return await _db.VolunteerSocialEvents.Where(x => x.SocialEventId == id).Select(x => new VolunteerSocialEventModel(x)).ToListAsync();
         }
