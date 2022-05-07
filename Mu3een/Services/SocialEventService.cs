@@ -97,6 +97,10 @@ namespace Mu3een.Services
                 });
                 await _db.SaveChangesAsync();
             }
+            else
+            {
+                throw new AppException("Alerdy Requested");
+            }
         }
 
         public async Task SetCompleted(Guid id, Guid volunteerId)
