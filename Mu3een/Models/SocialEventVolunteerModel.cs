@@ -2,13 +2,13 @@
 
 namespace Mu3een.Models
 {
-    public class VolunteerSocialEventModel
+    public class SocialEventVolunteerModel
     {
-        public VolunteerSocialEventModel()
+        public SocialEventVolunteerModel()
         {
 
         }  
-        public VolunteerSocialEventModel(VolunteerSocialEvent model)
+        public SocialEventVolunteerModel(VolunteerSocialEvent model)
         {
             Id = model.Id;
             Volunteer =new VolunteerModel(model.Volunteer!);

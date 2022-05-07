@@ -43,7 +43,7 @@ namespace Mu3een.Controllers
         }
 
         [HttpGet("{id}/Volunteers")]
-        public async Task<ActionResult<IEnumerable<VolunteerSocialEventModel>>> GetEventVolunteers(Guid id)
+        public async Task<ActionResult<IEnumerable<SocialEventVolunteerModel>>> GetEventVolunteers(Guid id)
         {
             return Ok(await _SocialEventService.GetEventVolunteers(id));
         }

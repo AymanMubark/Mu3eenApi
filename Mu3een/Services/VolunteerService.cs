@@ -15,7 +15,7 @@ namespace Mu3een.Services
         public Task<VolunteerModel> GetVolunteerById(Guid id);
         public Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel  model);
         public Task<IEnumerable<VolunteerRewardModel>> GetRewardsById(Guid id);
-        public Task<IEnumerable<Models.VolunteerSocialEventModel>> GetSocialEventsById(Guid id);
+        public Task<IEnumerable<Models.SocialEventVolunteerModel>> GetSocialEventsById(Guid id);
         public Task<Volunteer> GetById(Guid id);
         public Task<Volunteer?> GetByPhone(string phone);
         public Task SetCompleted(Guid id, Guid socialEventId);
@@ -92,9 +92,9 @@ namespace Mu3een.Services
             return await _db.VolunteerRewards.Where(x => x.VolunteerId == id).Select(x => new VolunteerRewardModel(x)).ToListAsync();
         }
 
-        public async Task<IEnumerable<Models.VolunteerSocialEventModel>> GetSocialEventsById(Guid id)
+        public async Task<IEnumerable<Models.SocialEventVolunteerModel>> GetSocialEventsById(Guid id)
         {
-            return await _db.VolunteerSocialEvents.Where(x => x.VolunteerId == id).Select(x => new VolunteerSocialEventModel(x)).ToListAsync();
+            return await _db.VolunteerSocialEvents.Where(x => x.VolunteerId == id).Select(x => new SocialEventVolunteerModel(x)).ToListAsync();
         }
 
         public async Task ApplyToService(Guid volunteerId, Guid socialEventId)
