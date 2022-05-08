@@ -105,21 +105,22 @@ namespace Mu3een.Services
 
         public async Task SetCompleted(Guid id, Guid volunteerId)
         {
-            Entities.SocialEventVolunteer? volunteerSocialEvent = await _db.SocialEventVolunteers.SingleOrDefaultAsync(x => x.SocialEventId == id && x.VolunteerId == volunteerId);
+            Entities.SocialEventVolunteer? volunteerSocialEvent = await _db.SocialEventVolunteers.Include(x=>x.SocialEvent).SingleOrDefaultAsync(x => x.SocialEventId == id && x.VolunteerId == volunteerId);
             if (volunteerSocialEvent != null)
             {
-                SocialEvent? socialEvent = await _db.SocialEvents.FindAsync(id);
-                if (socialEvent != null)
+                if (volunteerSocialEvent.SocialEvent != null)
                 {
+                    Volunteer? volunteer = await _db.Volunteers.FindAsync(volunteerId);
+                    if (volunteer != null)
+                    {
+                        volunteer.Points += volunteerSocialEvent.SocialEvent.Points;
+                        _db.Volunteers.Update(volunteer);
 
-                    Volunteer? volunteer = await _db.Volunteers.FindAsync(id);
-                    volunteer.Points += socialEvent.Points;
-                    _db.Volunteers.Update(volunteer);
+                        volunteerSocialEvent.VolunteerStatus = VolunteerSocialEventStatus.Complete;
+                        _db.SocialEventVolunteers.Update(volunteerSocialEvent);
 
-                    volunteerSocialEvent.VolunteerStatus = VolunteerSocialEventStatus.Complete;
-                    _db.SocialEventVolunteers.Update(volunteerSocialEvent);
-
-                    await _db.SaveChangesAsync();
+                        await _db.SaveChangesAsync();
+                    }
                 }
 
             }
