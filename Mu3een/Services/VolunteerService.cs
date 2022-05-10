@@ -99,6 +99,12 @@ namespace Mu3een.Services
         {
             var volunteer =  await GetById(id);
             volunteer.Name = model.Name;    
+            volunteer.Age = model.Age; 
+            volunteer.Gender = model.Gender;
+            if (model.Image != null){
+                var image = baseUrl + "/" + (await _filesHelper.UploadFile(model.Image));
+                volunteer.ImageUrl = image;
+            }
             _db.Update(volunteer);
             await _db.SaveChangesAsync();
             return new VolunteerModel(volunteer);
