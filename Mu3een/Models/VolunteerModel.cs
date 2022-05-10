@@ -12,7 +12,7 @@ namespace Mu3een.Models
         {
             Id = model.Id;
             Name = model.Name;
-            Name = model.Phone;
+            Phone = model.Phone;
             ImageUrl = model.ImageUrl;
             Gender = model.Gender;
             Age = model.Age;
