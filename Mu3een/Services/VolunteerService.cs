@@ -24,10 +24,13 @@ namespace Mu3een.Services
     {
         public readonly Mu3eenContext _db;
         public readonly IJwtUtils _iJwtUtils;
-        public VolunteerService(Mu3eenContext db, IJwtUtils jwtUtils)
+        public readonly FilesHelper _filesHelper;
+        
+        public VolunteerService(Mu3eenContext db, IJwtUtils jwtUtils, FilesHelper filesHelper)
         {
             _db = db;
             _iJwtUtils = jwtUtils;
+            _filesHelper = filesHelper;
         }
 
         public async Task<Volunteer> GetById(Guid id)
