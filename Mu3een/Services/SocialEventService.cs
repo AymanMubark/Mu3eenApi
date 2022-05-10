@@ -63,10 +63,10 @@ namespace Mu3een.Services
         public async Task<IEnumerable<SocialEventModel>> GetAll(SocialEventSearchModel model)
         {
             return await _db.SocialEvents.Include(x => x.SocialEventType).Include(x=>x.Institution)
-                .Where(x=>x.Name!.ToLower().Contains(model.Key.ToLower()) ||
-                x.Description!.ToLower().Contains(model.Key) || 
-                x.Institution!.Name!.ToLower().Contains(model.Key))
-               .Where(x=> x.Address!.StartsWith(model.Address))
+                .Where(x=>x.Name!.ToLower().Contains(model.Key??"".ToLower()) ||
+                x.Description!.ToLower().Contains(model.Key??"") || 
+                x.Institution!.Name!.ToLower().Contains(model.Key??""))
+               .Where(x=> x.Address!.StartsWith(model.Address??""))
                .Where(x=>model.SocialEventTypeid == null || x.SocialEventTypeId == model.SocialEventTypeid)
                .OrderByDescending(x=>x.CreatedAt)
                .Select(x => new SocialEventModel(x))
