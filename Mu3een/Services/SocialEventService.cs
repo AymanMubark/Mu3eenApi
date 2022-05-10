@@ -11,7 +11,7 @@ namespace Mu3een.Services
         public Task ApplyToService(Guid id, Guid volunteerId);
         public Task SetCompleted(Guid id, Guid socialEventId);
         public Task SetAccept(Guid id, Guid socialEventId);
-        public Task<IEnumerable<SocialEventModel>> GetAll();
+        public Task<IEnumerable<SocialEventModel>> GetAll(SocialEventSearchModel model);
         public Task<IEnumerable<SocialEventModel>> GetAllByInstitutionId(Guid id);
         public Task<IEnumerable<SocialEventVolunteerModel>> GetEventVolunteers(Guid id);
         public Task<SocialEventModel> GetSocialEventById(Guid id);
@@ -60,9 +60,17 @@ namespace Mu3een.Services
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<SocialEventModel>> GetAll()
+        public async Task<IEnumerable<SocialEventModel>> GetAll(SocialEventSearchModel model)
         {
-            return await _db.SocialEvents.Include(x => x.SocialEventType).Select(x => new SocialEventModel(x)).ToListAsync();
+            return await _db.SocialEvents.Include(x => x.SocialEventType).Include(x=>x.Institution)
+                .Where(x=>x.Name!.ToLower().Contains(model.Key.ToLower()) ||
+                x.Description!.ToLower().Contains(model.Key) || 
+                x.Institution!.Name!.ToLower().Contains(model.Key))
+               .Where(x=> x.Address!.StartsWith(model.Address))
+               .Where(x=>model.SocialEventTypeid == null || x.SocialEventTypeId == model.SocialEventTypeid)
+               .OrderByDescending(x=>x.CreatedAt)
+               .Select(x => new SocialEventModel(x))
+               .ToListAsync();
         }
 
         public async Task<IEnumerable<SocialEventModel>> GetAllByInstitutionId(Guid id)

@@ -31,9 +31,9 @@ namespace Mu3een.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SocialEventModel>>> Get()
+        public async Task<ActionResult<IEnumerable<SocialEventModel>>> Get( [FromQuery] SocialEventSearchModel model)
         {
-            return Ok(await _socialEventService.GetAll());
+            return Ok(await _socialEventService.GetAll(model));
         }
 
         [HttpGet("{id}")]
