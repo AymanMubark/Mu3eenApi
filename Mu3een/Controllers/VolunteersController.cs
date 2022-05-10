@@ -77,13 +77,7 @@ namespace Mu3een.Controllers
             return Ok(await _volunteerService.GetSocialEventsById(id));
         } 
 
-        [HttpPost("{id}/ExChangePoints")]
-        public async Task<ActionResult> ExChangePoints(Guid id,[FromBody]Guid rewardId)
-        {
-            await _volunteerService.ExChangePoints(id, rewardId);
-            return Ok();
-        }      
-        
+    
 
         [HttpPut("{id}")]
         public async Task<ActionResult<VolunteerModel>> Put(Guid id,VolunteerRegisterRequestModel model)

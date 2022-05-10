@@ -18,7 +18,6 @@ namespace Mu3een.Services
         public Task<IEnumerable<SocialEventVolunteerModel>> GetSocialEventsById(Guid id);
         public Task<Volunteer> GetById(Guid id);
         public Task<Volunteer?> GetByPhone(string phone);
-        public Task ExChangePoints(Guid id, Guid rewardId);
     }
 
     public class VolunteerService : IVolunteerService
@@ -92,40 +91,10 @@ namespace Mu3een.Services
 
         public async Task<IEnumerable<SocialEventVolunteerModel>> GetSocialEventsById(Guid id)
         {
-            return await _db.SocialEventVolunteers.Include(x=>x.SocialEvent).Include(x=>x.SocialEvent.SocialEventType).Where(x => x.VolunteerId == id).Select(x => new SocialEventVolunteerModel(x)).ToListAsync();
+            return await _db.SocialEventVolunteers.Include(x=>x.SocialEvent).Include(x=>x.SocialEvent!.SocialEventType).Where(x => x.VolunteerId == id).Select(x => new SocialEventVolunteerModel(x)).ToListAsync();
         }
 
-        public async Task ExChangePoints(Guid id, Guid rewardId)
-        {
-            var reward = await _db.Rewards.FindAsync(rewardId);
-            if (reward == null)
-            {
-                throw new KeyNotFoundException("reward exp");
-            }
-            Volunteer? volunteer = await GetById(id);
-            if(volunteer.Points < reward.Points)
-            {
-                throw new AppException("points les than institution points");
-            }
-            var volunteerReward = await _db.VolunteerRewards.SingleOrDefaultAsync(x => x.VolunteerId == id && x.RewardId == rewardId);
-            if (volunteerReward == null)
-            {
-                volunteerReward = new VolunteerReward()
-                {
-                    VolunteerId = id,
-                    RewardId = rewardId,
-                };
-
-                await _db.VolunteerRewards.AddAsync(volunteerReward);
-
-
-                volunteer.Points -= reward!.Points!;
-                _db.Volunteers.Update(volunteer);
-
-                await _db.SaveChangesAsync();
-            }
-        }
-
+   
         public async Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel model)
         {
             var volunteer =  await GetById(id);

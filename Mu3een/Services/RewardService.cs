@@ -12,8 +12,8 @@ namespace Mu3een.Services
         public Task<RewardModel> GetRewardById(Guid id);
         public Task<IEnumerable<RewardModel>> GetAll();
         public Task Add(RewardAddRequestModel model, string baseUrl);
-        //public Task Update(Guid id, string Name);
         public Task Delete(Guid id);
+        public Task Redeem(Guid id, Guid volunteerId);
     }
     public class RewardService : IRewardService
     {
@@ -48,7 +48,7 @@ namespace Mu3een.Services
 
         public async Task<IEnumerable<RewardModel>> GetAll()
         {
-            return await _db.Rewards.Where(x=>x.Status).Select(x => new RewardModel(x)).ToListAsync();
+            return await _db.Rewards.Where(x => x.Status).Select(x => new RewardModel(x)).ToListAsync();
         }
 
         public async Task<RewardModel> GetRewardById(Guid id)
@@ -70,5 +70,46 @@ namespace Mu3een.Services
             _db.Rewards.Update(reward);
             await _db.SaveChangesAsync();
         }
+
+        public async Task Redeem(Guid id, Guid volunteerId)
+        {
+            var volunteerReward = await _db.VolunteerRewards.SingleOrDefaultAsync(x => x.VolunteerId == volunteerId && x.RewardId == id);
+
+            if (volunteerReward == null)
+            {
+                var reward = await _db.Rewards.FindAsync(id);
+                if (reward == null)
+                {
+                    throw new KeyNotFoundException("reward exp");
+                }
+                Volunteer? volunteer = await _db.Volunteers.FindAsync(volunteerId);
+                if (volunteer != null)
+                {
+                    if (volunteer.Points < reward.Points)
+                    {
+                        throw new AppException("points les than institution points");
+                    }
+
+                    volunteerReward = new VolunteerReward()
+                    {
+                        VolunteerId = volunteerId,
+                        RewardId = id,
+                    };
+
+                    await _db.VolunteerRewards.AddAsync(volunteerReward);
+
+
+                    volunteer.Points -= reward!.Points!;
+                    _db.Volunteers.Update(volunteer);
+
+                    await _db.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                throw new AppException("reward redeem alerady check rewards list");
+            }
+        }
+
     }
 }
