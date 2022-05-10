@@ -13,7 +13,7 @@ namespace Mu3een.Services
 
         public Task<VerifyOTPResponseModel> VerifyOTP(string phone, string otp);
         public Task<VolunteerModel> GetVolunteerById(Guid id);
-        public Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel  model);
+        public Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel  model,string baseUrl);
         public Task<IEnumerable<RewardModel>> GetRewardsById(Guid id);
         public Task<IEnumerable<SocialEventVolunteerModel>> GetSocialEventsById(Guid id);
         public Task<Volunteer> GetById(Guid id);
@@ -24,10 +24,13 @@ namespace Mu3een.Services
     {
         public readonly Mu3eenContext _db;
         public readonly IJwtUtils _iJwtUtils;
-        public VolunteerService(Mu3eenContext db, IJwtUtils jwtUtils)
+        public readonly FilesHelper _filesHelper;
+        
+        public VolunteerService(Mu3eenContext db, IJwtUtils jwtUtils, FilesHelper filesHelper)
         {
             _db = db;
             _iJwtUtils = jwtUtils;
+            _filesHelper = filesHelper;
         }
 
         public async Task<Volunteer> GetById(Guid id)
@@ -95,10 +98,16 @@ namespace Mu3een.Services
         }
 
    
-        public async Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel model)
+        public async Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel model,string baseUrl)
         {
             var volunteer =  await GetById(id);
             volunteer.Name = model.Name;    
+            volunteer.Age = model.Age; 
+            volunteer.Gender = model.Gender;
+            if (model.Image != null){
+                var image = baseUrl + "/" + (await _filesHelper.UploadFile(model.Image));
+                volunteer.ImageUrl = image;
+            }
             _db.Update(volunteer);
             await _db.SaveChangesAsync();
             return new VolunteerModel(volunteer);
