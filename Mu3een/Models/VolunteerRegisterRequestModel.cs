@@ -3,5 +3,8 @@
     public class VolunteerRegisterRequestModel
     {
         public string? Name { get; set; }
+        public IFormFile? Image { get; set; }
+        public Gender? Gender { get; set; }
+        public int? Age { get; set; }
     }
 }
