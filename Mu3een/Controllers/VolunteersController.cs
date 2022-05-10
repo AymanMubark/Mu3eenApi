@@ -59,7 +59,7 @@ namespace Mu3een.Controllers
         /// </summary>
         /// <param name="id">volunteer Id</param>
         /// <returns></returns>
-        [HttpGet("{id}/Rewords")]
+        [HttpGet("{id}/Rewards")]
         public async Task<ActionResult<IEnumerable<VolunteerRewardModel>>> GetRewords(Guid id)
         {
             return Ok(await _volunteerService.GetRewardsById(id));

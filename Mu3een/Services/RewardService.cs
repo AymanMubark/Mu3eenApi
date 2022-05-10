@@ -107,7 +107,7 @@ namespace Mu3een.Services
             }
             else
             {
-                throw new AppException("reward redeem alerady check rewards list");
+                throw new AppException("reward alerady redeem check rewards list!");
             }
         }
 

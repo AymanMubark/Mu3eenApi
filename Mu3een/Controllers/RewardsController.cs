@@ -50,7 +50,7 @@ namespace Mu3een.Controllers
         }
 
         [HttpPost("{id}/Redeem")]
-        public async Task<ActionResult> ExChangePoints(Guid id, [FromBody] Guid volunteerId)
+        public async Task<ActionResult> Redeem(Guid id, [FromBody] Guid volunteerId)
         {
             await _rewardService.Redeem(id, volunteerId);
             return Ok();
