@@ -14,7 +14,7 @@ namespace Mu3een.Services
         public Task<VerifyOTPResponseModel> VerifyOTP(string phone, string otp);
         public Task<VolunteerModel> GetVolunteerById(Guid id);
         public Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel  model);
-        public Task<IEnumerable<VolunteerRewardModel>> GetRewardsById(Guid id);
+        public Task<IEnumerable<RewardModel>> GetRewardsById(Guid id);
         public Task<IEnumerable<SocialEventVolunteerModel>> GetSocialEventsById(Guid id);
         public Task<Volunteer> GetById(Guid id);
         public Task<Volunteer?> GetByPhone(string phone);
@@ -84,9 +84,9 @@ namespace Mu3een.Services
             };
         }
 
-        public async Task<IEnumerable<VolunteerRewardModel>> GetRewardsById(Guid id)
+        public async Task<IEnumerable<RewardModel>> GetRewardsById(Guid id)
         {
-            return await _db.VolunteerRewards.Where(x => x.VolunteerId == id).Select(x => new VolunteerRewardModel(x)).ToListAsync();
+            return await _db.VolunteerRewards.Include(x=>x.Reward).Where(x => x.VolunteerId == id).Select(x => new RewardModel(x.Reward)).ToListAsync();
         }
 
         public async Task<IEnumerable<SocialEventVolunteerModel>> GetSocialEventsById(Guid id)
