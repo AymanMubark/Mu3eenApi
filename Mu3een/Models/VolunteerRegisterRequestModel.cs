@@ -1,4 +1,7 @@
-﻿namespace Mu3een.Models
+
+using Mu3een.Entities;
+
+namespace Mu3een.Models
 {
     public class VolunteerRegisterRequestModel
     {
