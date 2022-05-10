@@ -12,6 +12,7 @@ namespace Mu3een.Models
         {
             Id = model.Id;
             Name = model.Name;
+            Name = model.Phone;
             ImageUrl = model.ImageUrl;
             Gender = model.Gender;
             Age = model.Age;
@@ -19,6 +20,7 @@ namespace Mu3een.Models
         }
         public  Guid Id { get;  }
         public string? Name { get;  }
+        public string? Phone { get;  }
         public string? ImageUrl { get;  }
         public Gender? Gender { get;  }
         public int? Age { get;  }
