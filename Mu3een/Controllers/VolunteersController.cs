@@ -80,7 +80,8 @@ namespace Mu3een.Controllers
     
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<VolunteerModel>> Put(Guid id,VolunteerRegisterRequestModel model)
+        [RequestSizeLimit(long.MaxValue)]
+        public async Task<ActionResult<VolunteerModel>> Put(Guid id,[FromForm] VolunteerRegisterRequestModel model)
         {
           
             return Ok(await _volunteerService.Register(id, model));
