@@ -11,12 +11,14 @@ namespace Mu3een.Controllers
     {
         private readonly IVolunteerService _volunteerService;
         private readonly IHttpContextAccessor _contextAccessor;
-
+        private string baseUrl;
 
         public VolunteersController(IVolunteerService volunteerService, IHttpContextAccessor contextAccessor)
         {
             _volunteerService = volunteerService;
             _contextAccessor = contextAccessor;
+            var request = _contextAccessor.HttpContext!.Request;
+            baseUrl = $"{request.Scheme}://{request.Host}";
         }
 
         /// <summary>
@@ -84,7 +86,7 @@ namespace Mu3een.Controllers
         public async Task<ActionResult<VolunteerModel>> Put(Guid id,[FromForm] VolunteerRegisterRequestModel model)
         {
           
-            return Ok(await _volunteerService.Register(id, model));
+            return Ok(await _volunteerService.Register(id, model,baseUrl));
         }
 
     }
