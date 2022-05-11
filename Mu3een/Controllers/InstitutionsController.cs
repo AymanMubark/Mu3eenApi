@@ -70,9 +70,9 @@ namespace Mu3een.Controllers
         /// <param name="id"></param>
         /// <returns>IEnumerable SocialEventModel</returns>
         [HttpGet("{id}/SocialEvents")]
-        public async Task<ActionResult<IEnumerable<SocialEventModel>>> GetServices(Guid id) 
+        public async Task<ActionResult<IEnumerable<SocialEventModel>>> GetSocialEvents(Guid id) 
         {
-            return Ok(await _institutionService.GetSocialEventsById(id));
+            return Ok(await _institutionService.GetInstitutionById(id));
         }
 
     }
