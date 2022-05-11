@@ -64,7 +64,7 @@ namespace Mu3een.Controllers
         [HttpPost("{id}/Apply")]
         public async Task<ActionResult> ApplyToEvent(Guid id, [FromBody] Guid volunteerId)
         {
-            await _socialEventService.ApplyToService(id, volunteerId);
+            await _socialEventService.ApplyTo(id, volunteerId);
             return Ok();
         }
 

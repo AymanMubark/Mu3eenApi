@@ -8,7 +8,7 @@ namespace Mu3een.Services
 {
     public interface ISocialEventService
     {
-        public Task ApplyToService(Guid id, Guid volunteerId);
+        public Task ApplyTo(Guid id, Guid volunteerId);
         public Task SetCompleted(Guid id, Guid socialEventId);
         public Task SetAccept(Guid id, Guid socialEventId);
         public Task<IEnumerable<SocialEventModel>> GetAll(SocialEventSearchModel model);
@@ -56,9 +56,9 @@ namespace Mu3een.Services
 
         public async Task Delete(Guid id)
         {
-            SocialEvent socialEvent =await GetById(id);
+            SocialEvent socialEvent = await GetById(id);
             socialEvent.Status = false;
-             _db.Update(socialEvent);
+            _db.Update(socialEvent);
             await _db.SaveChangesAsync();
         }
 
@@ -66,15 +66,15 @@ namespace Mu3een.Services
         {
             return await _db.SocialEvents
                 .Include(x => x.SocialEventType)
-                .Include(x=>x.Institution)
-                .Where(x=>
-                x.Name!.ToLower().Contains(model.Key??"".ToLower()) ||
-                x.Description!.ToLower().Contains(model.Key??"") || 
-                x.Institution!.Name!.ToLower().Contains(model.Key??"") &&
+                .Include(x => x.Institution)
+                .Where(x =>
+                x.Name!.ToLower().Contains(model.Key ?? "".ToLower()) ||
+                x.Description!.ToLower().Contains(model.Key ?? "") ||
+                x.Institution!.Name!.ToLower().Contains(model.Key ?? "") &&
                 x.Address!.StartsWith(model.Address ?? "") &&
                 (model.SocialEventTypeid == null || x.SocialEventTypeId == model.SocialEventTypeid) &&
                 x.Status)
-               .OrderByDescending(x=>x.CreatedAt)
+               .OrderByDescending(x => x.CreatedAt)
                .Select(x => new SocialEventModel(x))
                .ToListAsync();
         }
@@ -92,19 +92,27 @@ namespace Mu3een.Services
 
         public async Task<IEnumerable<SocialEventVolunteerModel>> GetEventVolunteers(Guid id)
         {
-            return await _db.SocialEventVolunteers.Include(x=> x.Volunteer).Where(x => x.SocialEventId == id).Select(x => new SocialEventVolunteerModel(x)).ToListAsync();
+            return await _db.SocialEventVolunteers.Include(x => x.Volunteer).Where(x => x.SocialEventId == id).Select(x => new SocialEventVolunteerModel(x)).ToListAsync();
         }
-        public async Task ApplyToService(Guid id, Guid volunteerId)
+        public async Task ApplyTo(Guid id, Guid volunteerId)
         {
-            SocialEventVolunteer? socialEventVolunteer =await _db.SocialEventVolunteers.SingleOrDefaultAsync(x => x.VolunteerId == volunteerId && x.SocialEventId == id);
+            SocialEventVolunteer? socialEventVolunteer = await _db.SocialEventVolunteers.SingleOrDefaultAsync(x => x.VolunteerId == volunteerId && x.SocialEventId == id);
             if (socialEventVolunteer == null)
             {
-                await _db.SocialEventVolunteers.AddAsync(new SocialEventVolunteer()
+                int count = await _db.SocialEventVolunteers.Where(x => x.SocialEventId == id && x.VolunteerStatus == VolunteerSocialEventStatus.Accept).CountAsync();
+                if ((count + 1) < (await GetById(id)).VolunteerRequried!)
                 {
-                    VolunteerId = volunteerId,
-                    SocialEventId = id,
-                });
-                await _db.SaveChangesAsync();
+                    await _db.SocialEventVolunteers.AddAsync(new SocialEventVolunteer()
+                    {
+                        VolunteerId = volunteerId,
+                        SocialEventId = id,
+                    });
+                    await _db.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new AppException("Volunteers number full");
+                }
             }
             else
             {
@@ -114,7 +122,7 @@ namespace Mu3een.Services
 
         public async Task SetCompleted(Guid id, Guid volunteerId)
         {
-            Entities.SocialEventVolunteer? volunteerSocialEvent = await _db.SocialEventVolunteers.Include(x=>x.SocialEvent).SingleOrDefaultAsync(x => x.SocialEventId == id && x.VolunteerId == volunteerId);
+            Entities.SocialEventVolunteer? volunteerSocialEvent = await _db.SocialEventVolunteers.Include(x => x.SocialEvent).SingleOrDefaultAsync(x => x.SocialEventId == id && x.VolunteerId == volunteerId);
             if (volunteerSocialEvent != null)
             {
                 if (volunteerSocialEvent.SocialEvent != null)
@@ -140,9 +148,17 @@ namespace Mu3een.Services
             SocialEventVolunteer? volunteerSocialEvent = await _db.SocialEventVolunteers.SingleOrDefaultAsync(x => x.SocialEventId == id && x.VolunteerId == volunteerId);
             if (volunteerSocialEvent != null)
             {
-                volunteerSocialEvent.VolunteerStatus = VolunteerSocialEventStatus.Accept;
-                _db.SocialEventVolunteers.Update(volunteerSocialEvent);
-                await _db.SaveChangesAsync();
+                int count = await _db.SocialEventVolunteers.Where(x => x.SocialEventId == id && x.VolunteerStatus == VolunteerSocialEventStatus.Accept).CountAsync();
+                if (count < (await GetById(id)).VolunteerRequried!)
+                {
+                    volunteerSocialEvent.VolunteerStatus = VolunteerSocialEventStatus.Accept;
+                    _db.SocialEventVolunteers.Update(volunteerSocialEvent);
+                    await _db.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new AppException("Volunteers number full");
+                }
 
             }
         }
