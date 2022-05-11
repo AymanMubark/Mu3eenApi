@@ -62,12 +62,16 @@ namespace Mu3een.Services
 
         public async Task<IEnumerable<SocialEventModel>> GetAll(SocialEventSearchModel model)
         {
-            return await _db.SocialEvents.Include(x => x.SocialEventType).Include(x=>x.Institution)
-                .Where(x=>x.Name!.ToLower().Contains(model.Key??"".ToLower()) ||
+            return await _db.SocialEvents
+                .Include(x => x.SocialEventType)
+                .Include(x=>x.Institution)
+                .Where(x=>
+                x.Name!.ToLower().Contains(model.Key??"".ToLower()) ||
                 x.Description!.ToLower().Contains(model.Key??"") || 
-                x.Institution!.Name!.ToLower().Contains(model.Key??""))
-               .Where(x=> x.Address!.StartsWith(model.Address??""))
-               .Where(x=>model.SocialEventTypeid == null || x.SocialEventTypeId == model.SocialEventTypeid)
+                x.Institution!.Name!.ToLower().Contains(model.Key??"") &&
+                x.Address!.StartsWith(model.Address ?? "") &&
+                (model.SocialEventTypeid == null || x.SocialEventTypeId == model.SocialEventTypeid) &&
+                x.Status)
                .OrderByDescending(x=>x.CreatedAt)
                .Select(x => new SocialEventModel(x))
                .ToListAsync();
@@ -75,7 +79,7 @@ namespace Mu3een.Services
 
         public async Task<IEnumerable<SocialEventModel>> GetAllByInstitutionId(Guid id)
         {
-            return await _db.SocialEvents.Where(x => x.InstitutionId == id).Select(x => new SocialEventModel(x)).ToListAsync();
+            return await _db.SocialEvents.Where(x => x.InstitutionId == id && x.Status).Select(x => new SocialEventModel(x)).ToListAsync();
         }
 
         public async Task<SocialEventModel> GetSocialEventById(Guid id)
