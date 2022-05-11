@@ -55,9 +55,11 @@ namespace Mu3een.Services
             await _db.SaveChangesAsync();
         }
 
-        public Task Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            throw new NotImplementedException();
+            SocialEvent socialEvent =await GetById(id);
+            _db.Remove(socialEvent);
+            await _db.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<SocialEventModel>> GetAll(SocialEventSearchModel model)
