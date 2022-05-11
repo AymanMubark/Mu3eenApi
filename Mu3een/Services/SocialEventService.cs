@@ -149,7 +149,7 @@ namespace Mu3een.Services
             if (volunteerSocialEvent != null)
             {
                 int count = await _db.SocialEventVolunteers.Where(x => x.SocialEventId == id && x.VolunteerStatus == VolunteerSocialEventStatus.Accept).CountAsync();
-                if (count < (await GetById(id)).VolunteerRequried!)
+                if ((count +1 ) < (await GetById(id)).VolunteerRequried!)
                 {
                     volunteerSocialEvent.VolunteerStatus = VolunteerSocialEventStatus.Accept;
                     _db.SocialEventVolunteers.Update(volunteerSocialEvent);
