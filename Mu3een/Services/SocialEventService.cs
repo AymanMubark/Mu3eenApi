@@ -12,7 +12,6 @@ namespace Mu3een.Services
         public Task SetCompleted(Guid id, Guid socialEventId);
         public Task SetAccept(Guid id, Guid socialEventId);
         public Task<IEnumerable<SocialEventModel>> GetAll(SocialEventSearchModel model);
-        public Task<IEnumerable<SocialEventModel>> GetAllByInstitutionId(Guid id);
         public Task<IEnumerable<SocialEventVolunteerModel>> GetEventVolunteers(Guid id);
         public Task<SocialEventModel> GetSocialEventById(Guid id);
         public Task<SocialEvent> GetById(Guid id);
@@ -78,11 +77,6 @@ namespace Mu3een.Services
                .OrderByDescending(x=>x.CreatedAt)
                .Select(x => new SocialEventModel(x))
                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<SocialEventModel>> GetAllByInstitutionId(Guid id)
-        {
-            return await _db.SocialEvents.Where(x => x.InstitutionId == id && x.Status).Select(x => new SocialEventModel(x)).ToListAsync();
         }
 
         public async Task<SocialEventModel> GetSocialEventById(Guid id)

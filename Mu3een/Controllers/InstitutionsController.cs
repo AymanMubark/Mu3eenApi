@@ -72,7 +72,7 @@ namespace Mu3een.Controllers
         [HttpGet("{id}/SocialEvents")]
         public async Task<ActionResult<IEnumerable<SocialEventModel>>> GetSocialEvents(Guid id) 
         {
-            return Ok(await _institutionService.GetInstitutionById(id));
+            return Ok(await _institutionService.GetSocialEventsById(id));
         }
 
     }
