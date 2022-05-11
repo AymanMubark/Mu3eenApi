@@ -58,7 +58,8 @@ namespace Mu3een.Services
         public async Task Delete(Guid id)
         {
             SocialEvent socialEvent =await GetById(id);
-            _db.Remove(socialEvent);
+            socialEvent.Status = false;
+             _db.Update(socialEvent);
             await _db.SaveChangesAsync();
         }
 
