@@ -52,7 +52,7 @@ namespace Mu3een.Services
             {
                 Token = _iJwtUtils.GenerateJwtToken(institution),
                 User = new InstitutionModel(institution),
-                Role = "Institution",
+                Role = nameof(Role.Institution),
             };
         }
 

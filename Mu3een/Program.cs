@@ -35,6 +35,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<IVolunteerService, VolunteerService>();
     services.AddScoped<IInstitutionService, InstitutionService>();
     services.AddScoped<IRewardService, RewardService>();
+    services.AddScoped<IAdminService, AdminService>();
 }
 
 var app = builder.Build();
