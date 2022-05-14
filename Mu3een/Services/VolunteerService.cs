@@ -116,7 +116,7 @@ namespace Mu3een.Services
 
         public Task<List<VolunteerModel>> GetAll(VolunteerSearchModel model)
         {
-            return _db.Volunteers.Where(x => x.Name!.ToLower().Contains(model.Key ?? "".ToLower()) || x.Phone!.ToLower().Contains(model.Key ?? "".ToLower())).Select(x => new VolunteerModel(x)).ToListAsync();
+            return _db.Volunteers.Where(x => x.Name != null &&  (x.Name.ToLower().Contains(model.Key ?? "".ToLower()) || x.Phone!.ToLower().Contains(model.Key ?? "".ToLower()))).Select(x => new VolunteerModel(x)).ToListAsync();
         }
     }
 }
