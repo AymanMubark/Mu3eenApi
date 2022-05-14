@@ -29,9 +29,10 @@ namespace Mu3een.Controllers
         } 
         
         [HttpPost]
-        public async Task<ActionResult<AdminModel>> Post(Admin model)
+        [RequestSizeLimit(long.MaxValue)]
+        public async Task<ActionResult<AdminModel>> Post(AdminRequestModel model)
         {
-            return Ok(await _adminService.Add(model));
+            return Ok(await _adminService.Add(model,baseUrl));
         }
 
         [HttpGet]
@@ -40,8 +41,9 @@ namespace Mu3een.Controllers
             return Ok(await _adminService.GetAll(model));
         }
 
-        [HttpPut]
-        public async Task<ActionResult<AdminModel>> Put(Guid id,AdminUpdateRequestModel model)
+        [HttpPut("{id}")]
+        [RequestSizeLimit(long.MaxValue)]
+        public async Task<ActionResult<AdminModel>> Put(Guid id,[FromForm] AdminRequestModel model)
         {
             return Ok(await _adminService.Update(id,model,baseUrl));
         }

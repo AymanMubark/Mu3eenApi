@@ -11,8 +11,8 @@ namespace Mu3een.Services
     {
         public Task<AdminLoginResponseModel> Login(AdminLoginRequestModel model);
         public Task<IEnumerable<AdminModel>> GetAll(AdminSearchModel model);
-        public Task<AdminModel> Add(Admin model);
-        public Task<AdminModel> Update(Guid id,AdminUpdateRequestModel model,string baseUrl);
+        public Task<AdminModel> Add(AdminRequestModel model, string baseUrl);
+        public Task<AdminModel> Update(Guid id, AdminRequestModel model, string baseUrl);
         public Task<Admin> GetById(Guid id);
     }
     public class AdminService : IAdminService
@@ -28,11 +28,23 @@ namespace Mu3een.Services
             _filesHelper = filesHelper;
         }
 
-        public async Task<AdminModel> Add(Admin model)
+        public async Task<AdminModel> Add(AdminRequestModel model, string baseUrl)
         {
-            await _db.AddAsync(model);
+
+            Admin admin = new();
+            admin.Name = model.Name;
+            admin.UserName = model.UserName;
+            admin.Email = model.Email;
+            admin.Password = model.Password;
+            admin.Role = Role.Admin;
+            if (model.Image != null)
+            {
+                var image = baseUrl + "/" + (await _filesHelper.UploadFile(model.Image));
+                admin.ImageUrl = image;
+            }
+            await _db.AddAsync(admin);
             await _db.SaveChangesAsync();
-            return new AdminModel(model);
+            return new AdminModel();
         }
         public async Task<Admin> GetById(Guid id)
         {
@@ -41,13 +53,11 @@ namespace Mu3een.Services
             return admin;
         }
 
-        public async Task<AdminModel> Update(Guid id, AdminUpdateRequestModel model, string baseUrl)
+        public async Task<AdminModel> Update(Guid id, AdminRequestModel model, string baseUrl)
         {
             Admin admin = await GetById(id);
             admin.Name = model.Name;
-            admin.UserName = model.UserName;
             admin.Email = model.Email;
-            admin.Password = model.Password;
             if (model.Image != null)
             {
                 var image = baseUrl + "/" + (await _filesHelper.UploadFile(model.Image));
