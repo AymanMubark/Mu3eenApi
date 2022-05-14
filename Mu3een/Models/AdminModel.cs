@@ -15,7 +15,7 @@ namespace Mu3een.Models
             UserName = model.UserName;
             Email = model.Email;
             ImageUrl = model.ImageUrl;
-            
+            CreatedAt = model.CreatedAt;
         }
         public Guid? Id { get; set; }
         public string? Name { get; set; }
@@ -23,5 +23,6 @@ namespace Mu3een.Models
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public string? ImageUrl { get; set; }
+        public DateTime? CreatedAt { get; set; }
     }
 }
