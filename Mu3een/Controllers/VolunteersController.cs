@@ -50,7 +50,7 @@ namespace Mu3een.Controllers
         /// </summary>
         /// <returns>volunteer</returns>
         [HttpGet]
-        public async Task<ActionResult<VolunteerModel>> Get(VolunteerSearchModel model)
+        public async Task<ActionResult<VolunteerModel>> Get([FromQuery] VolunteerSearchModel model)
         {
             return Ok(await _volunteerService.GetAll(model));
         }
