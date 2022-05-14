@@ -48,6 +48,16 @@ namespace Mu3een.Controllers
         /// <summary>
         /// Get volunteer by id
         /// </summary>
+        /// <returns>volunteer</returns>
+        [HttpGet]
+        public async Task<ActionResult<VolunteerModel>> Get(VolunteerSearchModel model)
+        {
+            return Ok(await _volunteerService.GetAll(model));
+        }
+
+        /// <summary>
+        /// Get volunteer by id
+        /// </summary>
         /// <param name="id"></param>
         /// <returns>volunteer</returns>
         [HttpGet("{id}")]

@@ -14,6 +14,7 @@ namespace Mu3een.Services
         public Task<IEnumerable<RewardModel>> GetRewardsById(Guid id);
         public Task<IEnumerable<SocialEventModel>> GetSocialEventsById(Guid id);
         public Task<InstitutionModel> GetInstitutionById(Guid id);
+        public Task<List<InstitutionModel>> GetAll(InstitutionSearchModel model);
         public Task<Institution> GetById(Guid id);
     }
     public class InstitutionService : IInstitutionService
@@ -87,6 +88,11 @@ namespace Mu3een.Services
         public async Task<IEnumerable<SocialEventModel>> GetSocialEventsById(Guid id)
         {
             return await _db.SocialEvents.Include(x=>x.SocialEventType).Where(x => x.InstitutionId == id &&x.Status).Select(x => new SocialEventModel(x)).ToListAsync();
+        }
+
+        public Task<List<InstitutionModel>> GetAll(InstitutionSearchModel model)
+        {
+            return _db.Institutions.Where(x => x.Name!.ToLower().Contains(model.Key ?? "".ToLower()) || x.Phone!.ToLower().Contains(model.Key ?? "".ToLower())).Select(x => new InstitutionModel(x)).ToListAsync();
         }
     }
 }

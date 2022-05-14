@@ -27,7 +27,7 @@ namespace Mu3een.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult<InstitutionLoginResponseModel>> Login(InstitutionLoginRequestModel model) 
         {
-            return Ok(await _institutionService.Login(model.Email,model.Passowrd));
+            return Ok(await _institutionService.Login(model.Email!,model.Passowrd!));
         }
 
         /// <summary>
@@ -40,6 +40,16 @@ namespace Mu3een.Controllers
         {
             var request = _contextAccessor.HttpContext!.Request;
             return Ok(await _institutionService.Register(model, $"{request.Scheme}://{request.Host}"));
+        } 
+        
+        /// <summary>
+        /// Register Institution
+        /// </summary>
+        /// <returns>InstitutionLoginResponseModel</returns>
+        [HttpGet]
+        public async Task<ActionResult<List<InstitutionModel>>> Get( [FromQuery] InstitutionSearchModel model) 
+        {
+            return Ok(await _institutionService.GetAll(model));
         } 
         
         /// <summary>

@@ -13,6 +13,7 @@ namespace Mu3een.Services
 
         public Task<VerifyOTPResponseModel> VerifyOTP(string phone, string otp);
         public Task<VolunteerModel> GetVolunteerById(Guid id);
+        public Task<List<VolunteerModel>> GetAll(VolunteerSearchModel model);
         public Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel  model,string baseUrl);
         public Task<IEnumerable<RewardModel>> GetRewardsById(Guid id);
         public Task<IEnumerable<SocialEventVolunteerModel>> GetSocialEventsById(Guid id);
@@ -89,7 +90,7 @@ namespace Mu3een.Services
 
         public async Task<IEnumerable<RewardModel>> GetRewardsById(Guid id)
         {
-            return await _db.VolunteerRewards.Include(x=>x.Reward).Where(x => x.VolunteerId == id).Select(x => new RewardModel(x.Reward)).ToListAsync();
+            return await _db.VolunteerRewards.Include(x=>x.Reward).Where(x => x.VolunteerId == id).Select(x => new RewardModel(x.Reward!)).ToListAsync();
         }
 
         public async Task<IEnumerable<SocialEventVolunteerModel>> GetSocialEventsById(Guid id)
@@ -111,6 +112,11 @@ namespace Mu3een.Services
             _db.Update(volunteer);
             await _db.SaveChangesAsync();
             return new VolunteerModel(volunteer);
+        }
+
+        public Task<List<VolunteerModel>> GetAll(VolunteerSearchModel model)
+        {
+            return _db.Volunteers.Where(x => x.Name!.ToLower().Contains(model.Key ?? "".ToLower()) || x.Phone!.ToLower().Contains(model.Key ?? "".ToLower())).Select(x => new VolunteerModel(x)).ToListAsync();
         }
     }
 }
