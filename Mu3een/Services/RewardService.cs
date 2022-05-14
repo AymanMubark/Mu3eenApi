@@ -10,7 +10,7 @@ namespace Mu3een.Services
     {
         public Task<Reward> GetById(Guid id);
         public Task<RewardModel> GetRewardById(Guid id);
-        public Task<IEnumerable<RewardModel>> GetAll();
+        public Task<IEnumerable<RewardModel>> GetAll(RewardSearchModel model);
         public Task Add(RewardAddRequestModel model, string baseUrl);
         public Task Delete(Guid id);
         public Task Redeem(Guid id, Guid volunteerId);
@@ -46,9 +46,9 @@ namespace Mu3een.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<RewardModel>> GetAll()
+        public async Task<IEnumerable<RewardModel>> GetAll(RewardSearchModel model)
         {
-            return await _db.Rewards.Where(x => x.Status).Select(x => new RewardModel(x)).ToListAsync();
+            return await _db.Rewards.Where(x => x.Status && x.Name!.ToLower().Contains(model.Key??"".ToLower())).Select(x => new RewardModel(x)).ToListAsync();
         }
 
         public async Task<RewardModel> GetRewardById(Guid id)

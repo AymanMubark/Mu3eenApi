@@ -31,9 +31,9 @@ namespace Mu3een.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RewardModel>>> Get()
+        public async Task<ActionResult<IEnumerable<RewardModel>>> Get([FromQuery] RewardSearchModel model)
         {
-            return Ok(await _rewardService.GetAll());
+            return Ok(await _rewardService.GetAll(model));
         }
 
         [HttpGet("{id}")]
