@@ -68,9 +68,9 @@ namespace Mu3een.Services
                 .Include(x => x.SocialEventType)
                 .Include(x => x.Institution)
                 .Where(x =>
-                x.Name!.ToLower().Contains(model.Key ?? "".ToLower()) &&
-                x.Description!.ToLower().Contains(model.Key ?? "") &&
-                x.Institution!.Name!.ToLower().Contains(model.Key ?? "") &&
+                (x.Name!.ToLower().Contains(model.Key??"".ToLower()) ||
+                x.Description!.ToLower().Contains(model.Key??"".ToLower()) ||
+                x.Institution!.Name!.ToLower().Contains(model.Key??"".ToLower())) &&
                 x.Address!.StartsWith(model.Address ?? "") &&
                 (model.SocialEventTypeid == null || x.SocialEventTypeId == model.SocialEventTypeid) &&
                 x.Status)

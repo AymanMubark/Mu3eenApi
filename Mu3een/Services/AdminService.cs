@@ -42,7 +42,7 @@ namespace Mu3een.Services
             {
                 Token = _iJwtUtils.GenerateJwtToken(admin),
                 User = new AdminModel(admin),
-                Role = nameof(admin.Role),
+                Role = nameof(Role.Admin),
             };
         }
     }
