@@ -10,6 +10,7 @@ namespace Mu3een.Services
     {
         public Task ApplyTo(Guid id, Guid volunteerId);
         public Task SetCompleted(Guid id, Guid socialEventId);
+        public Task<int> GetCount();
         public Task SetAccept(Guid id, Guid socialEventId);
         public Task<IEnumerable<SocialEventModel>> GetAll(SocialEventSearchModel model);
         public Task<IEnumerable<SocialEventVolunteerModel>> GetEventVolunteers(Guid id);
@@ -29,6 +30,11 @@ namespace Mu3een.Services
             _db = db;
             _filesHelper = filesHelper;
             _volunteerService = volunteerService;
+        }
+
+        public async Task<int> GetCount()
+        {
+            return await _db.SocialEvents.Where(x => x.Status).CountAsync();
         }
 
         public async Task Add(SocialEventAddRequestModel model, string baseUrl)

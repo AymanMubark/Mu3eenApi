@@ -10,7 +10,7 @@ namespace Mu3een.Services
     public interface IVolunteerService
     {
         public Task<string> Login(string phone);
-
+        public Task<int> GetCount();
         public Task<VerifyOTPResponseModel> VerifyOTP(string phone, string otp);
         public Task<VolunteerModel> GetVolunteerById(Guid id);
         public Task<List<VolunteerModel>> GetAll(VolunteerSearchModel model);
@@ -86,6 +86,10 @@ namespace Mu3een.Services
                 User = new VolunteerModel(volunteer),
                 Role = "Volunteer",
             };
+        }
+        public async Task<int> GetCount()
+        {
+            return await _db.Volunteers.Where(x => x.Status && x.Name != null).CountAsync();
         }
 
         public async Task<IEnumerable<RewardModel>> GetRewardsById(Guid id)

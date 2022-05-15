@@ -17,7 +17,7 @@ namespace Mu3een.Controllers
         public AdminsController(IAdminService adminService, IHttpContextAccessor contextAccessor)
         {
             _adminService = adminService;
-            _contextAccessor = contextAccessor; 
+            _contextAccessor = contextAccessor;
             var request = _contextAccessor.HttpContext!.Request;
             baseUrl = $"{request.Scheme}://{request.Host}";
         }
@@ -26,13 +26,13 @@ namespace Mu3een.Controllers
         public async Task<ActionResult<AdminLoginResponseModel>> Login(AdminLoginRequestModel model)
         {
             return Ok(await _adminService.Login(model));
-        } 
-        
+        }
+
         [HttpPost]
         [RequestSizeLimit(long.MaxValue)]
         public async Task<ActionResult<AdminModel>> Post(AdminRequestModel model)
         {
-            return Ok(await _adminService.Add(model,baseUrl));
+            return Ok(await _adminService.Add(model, baseUrl));
         }
 
         [HttpGet]
@@ -43,9 +43,21 @@ namespace Mu3een.Controllers
 
         [HttpPut("{id}")]
         [RequestSizeLimit(long.MaxValue)]
-        public async Task<ActionResult<AdminModel>> Put(Guid id,[FromForm] AdminRequestModel model)
+        public async Task<ActionResult<AdminModel>> Put(Guid id, [FromForm] AdminRequestModel model)
         {
-            return Ok(await _adminService.Update(id,model,baseUrl));
+            return Ok(await _adminService.Update(id, model, baseUrl));
+        }
+
+        [HttpGet("AdminCountsReport")]
+        public async Task<ActionResult<AdminCountsReportModel>> GetAdminCountsReport()
+        {
+            return Ok(await _adminService.GetAdminCountsReport());
+        }  
+
+        [HttpGet("SocailEventsReport")]
+        public async Task<ActionResult<AdminCountsReportModel>> GetSocailEventsReport()
+        {
+            return Ok(await _adminService.GetSocailEventsReport());
         }
     }
 }

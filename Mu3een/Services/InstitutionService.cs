@@ -12,6 +12,7 @@ namespace Mu3een.Services
         public Task<InstitutionLoginResponseModel> Login(string email, string password);
         public Task<InstitutionLoginResponseModel> Register(InstitutionRegisterModel model, string baseUrl);
         public Task<IEnumerable<RewardModel>> GetRewardsById(Guid id);
+        public Task<int> GetCount();
         public Task<IEnumerable<SocialEventModel>> GetSocialEventsById(Guid id);
         public Task<InstitutionModel> GetInstitutionById(Guid id);
         public Task<List<InstitutionModel>> GetAll(InstitutionSearchModel model);
@@ -28,7 +29,10 @@ namespace Mu3een.Services
             _iJwtUtils = jwtUtils;
             _filesHelper = filesHelper;
         }
-
+        public async Task<int> GetCount()
+        {
+            return await _db.Institutions.Where(x => x.Status).CountAsync();
+        }
         public async Task<Institution> GetById(Guid id)
         {
             Institution? institution = await _db.Institutions.FindAsync(id);

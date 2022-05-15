@@ -10,6 +10,7 @@ namespace Mu3een.Services
     {
         public Task<Reward> GetById(Guid id);
         public Task<RewardModel> GetRewardById(Guid id);
+        public Task<int> GetCount();
         public Task<IEnumerable<RewardModel>> GetAll(RewardSearchModel model);
         public Task Add(RewardAddRequestModel model, string baseUrl);
         public Task Delete(Guid id);
@@ -49,6 +50,11 @@ namespace Mu3een.Services
         public async Task<IEnumerable<RewardModel>> GetAll(RewardSearchModel model)
         {
             return await _db.Rewards.Where(x => x.Status && x.Name!.ToLower().Contains(model.Key??"".ToLower())).Select(x => new RewardModel(x)).ToListAsync();
+        }
+
+        public async Task<int> GetCount()
+        {
+            return await _db.Rewards.Where(x => x.Status).CountAsync();
         }
 
         public async Task<RewardModel> GetRewardById(Guid id)

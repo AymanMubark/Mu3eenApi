@@ -10,6 +10,8 @@ namespace Mu3een.Services
     public interface IAdminService
     {
         public Task<AdminLoginResponseModel> Login(AdminLoginRequestModel model);
+        public Task<AdminCountsReportModel> GetAdminCountsReport();
+        public Task<SocailEventsReport> GetSocailEventsReport();
         public Task<IEnumerable<AdminModel>> GetAll(AdminSearchModel model);
         public Task<AdminModel> Add(AdminRequestModel model, string baseUrl);
         public Task<AdminModel> Update(Guid id, AdminRequestModel model, string baseUrl);
@@ -87,6 +89,34 @@ namespace Mu3een.Services
         public async Task<IEnumerable<AdminModel>> GetAll(AdminSearchModel model)
         {
             return await _db.Admins.Where(x => x.Name!.ToLower().Contains(model.Key ?? "".ToLower()) || x.UserName!.ToLower().Contains(model.Key ?? "".ToLower())).Select(x => new AdminModel(x)).ToListAsync();
+        }
+
+        public async Task<AdminCountsReportModel> GetAdminCountsReport()
+        {
+            var VolunteersCount = await _db.Volunteers.Where(x => x.Status && x.Name != null).CountAsync();
+            var InstitutionsCount = await _db.Institutions.Where(x => x.Status).CountAsync();
+            var Rewards = await _db.Rewards.Where(x => x.Status).CountAsync();
+            return new AdminCountsReportModel()
+            {
+                Institutions = VolunteersCount,
+                Rewards = InstitutionsCount,
+                Volunteers = VolunteersCount,
+            };
+        }
+
+        public async Task<SocailEventsReport> GetSocailEventsReport()
+        {
+            List<SocailEventTypeCount> socailEventTypeCount = await _db.SocialEvents.Include(x => x.SocialEventType).Where(x => x.Status).GroupBy(x => x.SocialEventTypeId).Select(x => new SocailEventTypeCount
+            {
+                Count = x.Count(),
+                Name = x.First().Name,
+            }).ToListAsync();
+            int total = await _db.SocialEvents.Where(x => x.Status).CountAsync();
+            return new SocailEventsReport()
+            {
+                Total = total,
+                TypesCount= socailEventTypeCount,
+            };
         }
     }
 }
