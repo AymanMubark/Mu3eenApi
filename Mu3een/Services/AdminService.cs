@@ -109,7 +109,7 @@ namespace Mu3een.Services
             List<SocailEventTypeCount> socailEventTypeCount = await _db.SocialEvents.Include(x => x.SocialEventType).Where(x => x.Status).GroupBy(x => x.SocialEventTypeId).Select(x => new SocailEventTypeCount
             {
                 Count = x.Count(),
-                Name = x.First().Name,
+                Name = x.First().SocialEventType!.Name,
             }).ToListAsync();
             int total = await _db.SocialEvents.Where(x => x.Status).CountAsync();
             return new SocailEventsReport()
