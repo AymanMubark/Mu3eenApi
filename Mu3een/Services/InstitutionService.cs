@@ -9,14 +9,15 @@ namespace Mu3een.Services
 {
     public interface IInstitutionService
     {
-        public Task<InstitutionLoginResponseModel> Login(string email, string password);
+        public Task<InstitutionModel> Update(Guid Id, InstitutionRegisterModel model, string baseUrl);
         public Task<InstitutionLoginResponseModel> Register(InstitutionRegisterModel model, string baseUrl);
-        public Task<IEnumerable<RewardModel>> GetRewardsById(Guid id);
-        public Task<int> GetCount();
-        public Task<IEnumerable<SocialEventModel>> GetSocialEventsById(Guid id);
-        public Task<InstitutionModel> GetInstitutionById(Guid id);
+        public Task<InstitutionLoginResponseModel> Login(string email, string password);
         public Task<List<InstitutionModel>> GetAll(InstitutionSearchModel model);
+        public Task<IEnumerable<SocialEventModel>> GetSocialEventsById(Guid id);
+        public Task<IEnumerable<RewardModel>> GetRewardsById(Guid id);
+        public Task<InstitutionModel> GetInstitutionById(Guid id);
         public Task<Institution> GetById(Guid id);
+        public Task<int> GetCount();
     }
     public class InstitutionService : IInstitutionService
     {
@@ -83,6 +84,21 @@ namespace Mu3een.Services
             await _db.Institutions.AddAsync(institution);
             await _db.SaveChangesAsync();
             return await Login(model.Email!, model.Password!);
+        }
+
+        public async Task<InstitutionModel> Update(Guid Id,InstitutionRegisterModel model, string baseUrl)
+        {
+            Institution? institution = await GetById(Id);
+            string? image = null;
+            if (model.Image != null)
+                image = baseUrl + "/" + (await _filesHelper.UploadFile(model.Image));
+            institution.Name = model.Name;
+            institution.Email = model.Email;
+            institution.ImageUrl = image;
+
+            await _db.Institutions.AddAsync(institution);
+            await _db.SaveChangesAsync();
+            return new InstitutionModel(institution);
         }
 
         public async Task<IEnumerable<RewardModel>> GetRewardsById(Guid id)

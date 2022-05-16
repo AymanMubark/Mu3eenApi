@@ -12,11 +12,15 @@ namespace Mu3een.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
 
         private readonly IInstitutionService _institutionService;
+        private string baseUrl;
 
         public InstitutionsController(IInstitutionService institutionService, IHttpContextAccessor httpContextAccessor)
         {
             _institutionService = institutionService;
             _contextAccessor = httpContextAccessor;
+            var request = _contextAccessor.HttpContext!.Request;
+            baseUrl = $"{request.Scheme}://{request.Host}";
+
         }
 
         /// <summary>
@@ -25,9 +29,9 @@ namespace Mu3een.Controllers
         /// <param name="model"></param>
         /// <returns>InstitutionLoginResponseModel</returns>
         [HttpPost("Login")]
-        public async Task<ActionResult<InstitutionLoginResponseModel>> Login(InstitutionLoginRequestModel model) 
+        public async Task<ActionResult<InstitutionLoginResponseModel>> Login(InstitutionLoginRequestModel model)
         {
-            return Ok(await _institutionService.Login(model.Email!,model.Passowrd!));
+            return Ok(await _institutionService.Login(model.Email!, model.Passowrd!));
         }
 
         /// <summary>
@@ -36,29 +40,39 @@ namespace Mu3een.Controllers
         /// <param name="model"></param>
         /// <returns>InstitutionLoginResponseModel</returns>
         [HttpPost("Register")]
-        public async Task<ActionResult<InstitutionLoginResponseModel>> Register([FromForm] InstitutionRegisterModel model) 
+        public async Task<ActionResult<InstitutionLoginResponseModel>> Register([FromForm] InstitutionRegisterModel model)
         {
-            var request = _contextAccessor.HttpContext!.Request;
-            return Ok(await _institutionService.Register(model, $"{request.Scheme}://{request.Host}"));
-        } 
-        
+            return Ok(await _institutionService.Register(model, baseUrl));
+        }
+
+        /// <summary>
+        /// Register Institution
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>InstitutionModel</returns>
+        [HttpPut("{id}")]
+        public async Task<ActionResult<InstitutionModel>> Register(Guid id,[FromForm] InstitutionRegisterModel model)
+        {
+            return Ok(await _institutionService.Update(id,model, baseUrl));
+        }
+
         /// <summary>
         /// Register Institution
         /// </summary>
         /// <returns>InstitutionLoginResponseModel</returns>
         [HttpGet]
-        public async Task<ActionResult<List<InstitutionModel>>> Get( [FromQuery] InstitutionSearchModel model) 
+        public async Task<ActionResult<List<InstitutionModel>>> Get([FromQuery] InstitutionSearchModel model)
         {
             return Ok(await _institutionService.GetAll(model));
-        } 
-        
+        }
+
         /// <summary>
         /// Register Institution
         /// </summary>
         /// <param name="id"></param>
         /// <returns>InstitutionLoginResponseModel</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<InstitutionModel>> Get(Guid id) 
+        public async Task<ActionResult<InstitutionModel>> Get(Guid id)
         {
             return Ok(await _institutionService.GetInstitutionById(id));
         }
@@ -69,7 +83,7 @@ namespace Mu3een.Controllers
         /// <param name="id"></param>
         /// <returns>IEnumerable RewardModel</returns>
         [HttpGet("{id}/Rewards")]
-        public async Task<ActionResult<IEnumerable<RewardModel>>> GetRewards(Guid id) 
+        public async Task<ActionResult<IEnumerable<RewardModel>>> GetRewards(Guid id)
         {
             return Ok(await _institutionService.GetRewardsById(id));
         }
@@ -80,7 +94,7 @@ namespace Mu3een.Controllers
         /// <param name="id"></param>
         /// <returns>IEnumerable SocialEventModel</returns>
         [HttpGet("{id}/SocialEvents")]
-        public async Task<ActionResult<IEnumerable<SocialEventModel>>> GetSocialEvents(Guid id) 
+        public async Task<ActionResult<IEnumerable<SocialEventModel>>> GetSocialEvents(Guid id)
         {
             return Ok(await _institutionService.GetSocialEventsById(id));
         }
