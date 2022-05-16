@@ -51,7 +51,7 @@ namespace Mu3een.Controllers
         /// <param name="model"></param>
         /// <returns>InstitutionModel</returns>
         [HttpPut("{id}")]
-        public async Task<ActionResult<InstitutionModel>> Register(Guid id,[FromForm] InstitutionRegisterModel model)
+        public async Task<ActionResult<InstitutionModel>> Put(Guid id,[FromForm] InstitutionRegisterModel model)
         {
             return Ok(await _institutionService.Update(id,model, baseUrl));
         }

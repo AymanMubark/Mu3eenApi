@@ -78,7 +78,7 @@ namespace Mu3een.Services
                 Email = model.Email,
                 Password = model.Password,
                 Role = Role.Institution,
-                Phone =model.Phone,
+                Phone = model.Phone,
                 ImageUrl = image,
             };
             await _db.Institutions.AddAsync(institution);
@@ -86,7 +86,7 @@ namespace Mu3een.Services
             return await Login(model.Email!, model.Password!);
         }
 
-        public async Task<InstitutionModel> Update(Guid Id,InstitutionRegisterModel model, string baseUrl)
+        public async Task<InstitutionModel> Update(Guid Id, InstitutionRegisterModel model, string baseUrl)
         {
             Institution? institution = await GetById(Id);
             string? image = null;
@@ -96,7 +96,7 @@ namespace Mu3een.Services
             institution.Email = model.Email;
             institution.ImageUrl = image;
 
-            await _db.Institutions.AddAsync(institution);
+            _db.Institutions.Update(institution);
             await _db.SaveChangesAsync();
             return new InstitutionModel(institution);
         }
@@ -107,7 +107,7 @@ namespace Mu3een.Services
         }
         public async Task<IEnumerable<SocialEventModel>> GetSocialEventsById(Guid id)
         {
-            return await _db.SocialEvents.Include(x=>x.SocialEventType).Where(x => x.InstitutionId == id &&x.Status).Select(x => new SocialEventModel(x)).ToListAsync();
+            return await _db.SocialEvents.Include(x => x.SocialEventType).Where(x => x.InstitutionId == id && x.Status).Select(x => new SocialEventModel(x)).ToListAsync();
         }
 
         public Task<List<InstitutionModel>> GetAll(InstitutionSearchModel model)
