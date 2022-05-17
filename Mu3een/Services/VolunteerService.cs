@@ -82,8 +82,8 @@ namespace Mu3een.Services
             }
             return new VerifyOTPResponseModel()
             {
-                Token = _iJwtUtils.GenerateJwtToken(volunteer),
                 User = new VolunteerModel(volunteer),
+                Token = _iJwtUtils.GenerateJwtToken(volunteer),
                 Role = "Volunteer",
             };
         }
