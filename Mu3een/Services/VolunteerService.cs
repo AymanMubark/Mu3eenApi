@@ -78,7 +78,7 @@ namespace Mu3een.Services
             }
             if (volunteer.OTP != otp)
             {
-                throw new AppException("OTP not valid");
+                throw new AppException("OTP isn't valid");
             }
             return new VerifyOTPResponseModel()
             {

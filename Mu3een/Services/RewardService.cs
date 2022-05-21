@@ -86,14 +86,14 @@ namespace Mu3een.Services
                 var reward = await _db.Rewards.FindAsync(id);
                 if (reward == null)
                 {
-                    throw new KeyNotFoundException("reward exp");
+                    throw new KeyNotFoundException("reward not found");
                 }
                 Volunteer? volunteer = await _db.Volunteers.FindAsync(volunteerId);
                 if (volunteer != null)
                 {
                     if (volunteer.Points < reward.Points)
                     {
-                        throw new AppException("points les than institution points");
+                        throw new AppException("You don’t have enough points.");
                     }
 
                     volunteerReward = new VolunteerReward()
@@ -113,7 +113,7 @@ namespace Mu3een.Services
             }
             else
             {
-                throw new AppException("reward alerady redeem check rewards list!");
+                throw new AppException("reward already redeemed check your reward list!");
             }
         }
 

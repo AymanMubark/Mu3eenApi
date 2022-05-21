@@ -35,7 +35,7 @@ namespace Mu3een.Services
         public async Task<SocialEventType> GetById(Guid id)
         {
             SocialEventType? SocialEventType = await _db.SocialEventTypes.FindAsync(id);
-            if (SocialEventType == null) throw new KeyNotFoundException("SocialEventType not found");
+            if (SocialEventType == null) throw new KeyNotFoundException("Social Event Type not found");
             return SocialEventType;
         }
 

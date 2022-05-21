@@ -117,12 +117,12 @@ namespace Mu3een.Services
                 }
                 else
                 {
-                    throw new AppException("Volunteers number full");
+                    throw new AppException("Volunteers number is full !");
                 }
             }
             else
             {
-                throw new AppException("Alerdy Requested");
+                throw new AppException("has already been requested");
             }
         }
 
@@ -163,7 +163,7 @@ namespace Mu3een.Services
                 }
                 else
                 {
-                    throw new AppException("Volunteers number full");
+                    throw new AppException("Volunteers number is full !");
                 }
 
             }

@@ -35,7 +35,7 @@ namespace Mu3een.Test
             var regions = (await regionService.GetAll()).ToList();
 
             regions.Count.Should().Be(1);
-            regions.All(r => r.Name == null).Should().BeFalse();
+            regions.All(r => r.Name == null).Should().BeTrue();
         }
 
         [Test]
@@ -51,9 +51,11 @@ namespace Mu3een.Test
         [Test]
         public async Task GetByIdTestWhenIdExist()
         {
+            //arrange
             using var context = new Mu3eenContext(dbContextOptions);
-
+            //Action
             var region = await regionService.GetById(Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"));
+            //Assert
             region.Should().NotBeNull();
 
         }
@@ -63,14 +65,10 @@ namespace Mu3een.Test
             using var context = new Mu3eenContext(dbContextOptions);
             var regions = new List<Region>
         {
-            new Region { Id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"), Name = "Region", NameAr = "الرياض" },
+            new Region { Id = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"), Name = "Righd", NameAr = "الرياض" },
         };
-
             context.AddRange(regions);
-
             context.SaveChanges();
         }
-
-
     }
 }

@@ -67,7 +67,7 @@ namespace Mu3een.Services
             Institution? institution = await _db.Institutions.SingleOrDefaultAsync(x => x.Email == model.Email);
             if (institution != null)
             {
-                throw new AppException("email already exists");
+                throw new AppException("email already registerd");
             }
             string? image = null;
             if (model.Image != null)
