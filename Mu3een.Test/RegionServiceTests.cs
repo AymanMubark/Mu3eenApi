@@ -35,7 +35,7 @@ namespace Mu3een.Test
             var regions = (await regionService.GetAll()).ToList();
 
             regions.Count.Should().Be(1);
-            regions.All(r => r.Name == null).Should().BeTrue();
+            regions.All(r => r.Name == null).Should().BeFalse();
         }
 
         [Test]
