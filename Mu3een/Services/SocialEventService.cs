@@ -1,35 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using Mu3een.Data;
 using Mu3een.Entities;
-using Mu3een.Helpers;
+using Mu3een.IServices;
 using Mu3een.Models;
+using System.Data;
 
 namespace Mu3een.Services
 {
-    public interface ISocialEventService
-    {
-        public Task ApplyTo(Guid id, Guid volunteerId);
-        public Task SetCompleted(Guid id, Guid socialEventId);
-        public Task<int> GetCount();
-        public Task SetAccept(Guid id, Guid socialEventId);
-        public Task<IEnumerable<SocialEventModel>> GetAll(SocialEventSearchModel model);
-        public Task<IEnumerable<SocialEventVolunteerModel>> GetEventVolunteers(Guid id);
-        public Task<SocialEventModel> GetSocialEventById(Guid id);
-        public Task<SocialEvent> GetById(Guid id);
-        public Task Add(SocialEventAddRequestModel model, string baseUrl);
-        public Task Delete(Guid id);
-    }
     public class SocialEventService : ISocialEventService
     {
+        public readonly IPhotoService _photoService;
         private readonly Mu3eenContext _db;
-        public readonly FilesHelper _filesHelper;
-        public readonly IVolunteerService _volunteerService;
+        public readonly IMapper _mapper;
 
-        public SocialEventService(Mu3eenContext db, FilesHelper filesHelper, IVolunteerService volunteerService)
+        public SocialEventService(Mu3eenContext db, IPhotoService photoService, IMapper mapper)
         {
             _db = db;
-            _filesHelper = filesHelper;
-            _volunteerService = volunteerService;
+            _photoService = photoService;
+            _mapper = mapper;
         }
 
         public async Task<int> GetCount()
@@ -37,26 +27,31 @@ namespace Mu3een.Services
             return await _db.SocialEvents.Where(x => x.Status).CountAsync();
         }
 
-        public async Task Add(SocialEventAddRequestModel model, string baseUrl)
+        public async Task Add(SocialEventAddRequestModel model)
         {
-            string? image = null;
-            if (model.Image != null)
-                image = baseUrl + "/" + (await _filesHelper.UploadFile(model.Image));
-            await _db.SocialEvents.AddAsync(new SocialEvent()
+            var socialEvent = new SocialEvent
             {
                 Name = model.Name,
-                Address = model.Address,
-                ExpiryDate = model.ExpiryDate,
-                Latitude = model.Latitude,
-                Longitude = model.Longitude,
                 Description = model.Description,
-                InstitutionId = model.InstitutionId,
-                RegionId = model.RegionId,
                 SocialEventTypeId = model.SocialEventTypeId,
+                ExpiryDate = model.ExpiryDate,
                 VolunteerRequried = model.VolunteerRequried,
                 Points = model.Points,
-                ImageUrl = image
-            });
+                Address = model.Address,
+                Latitude = model.Latitude,
+                Longitude = model.Longitude,
+                InstitutionId = model.InstitutionId,
+            };
+
+            if (model.Image != null)
+            {
+                var result = await _photoService.AddPhotoAsync(model.Image);
+                if (result.Error != null) throw new Exception(result.Error.Message);
+                socialEvent.ImageUrl = result.Url.AbsoluteUri;
+                socialEvent.ImageId = result.PublicId;
+            }
+
+            await _db.SocialEvents.AddAsync(socialEvent);
             await _db.SaveChangesAsync();
         }
 
@@ -74,20 +69,20 @@ namespace Mu3een.Services
                 .Include(x => x.SocialEventType)
                 .Include(x => x.Institution)
                 .Where(x =>
-                (x.Name!.ToLower().Contains(model.Key??"".ToLower()) ||
-                x.Description!.ToLower().Contains(model.Key??"".ToLower()) ||
-                x.Institution!.Name!.ToLower().Contains(model.Key??"".ToLower())) &&
+                (x.Name!.ToLower().Contains(model.Key ?? "".ToLower()) ||
+                x.Description!.ToLower().Contains(model.Key ?? "".ToLower()) ||
+                x.Institution!.UserName!.ToLower().Contains(model.Key ?? "".ToLower())) &&
                 x.Address!.StartsWith(model.Address ?? "") &&
                 (model.SocialEventTypeid == null || x.SocialEventTypeId == model.SocialEventTypeid) &&
                 x.Status)
                .OrderByDescending(x => x.CreatedAt)
-               .Select(x => new SocialEventModel(x))
+               .ProjectTo<SocialEventModel>(_mapper.ConfigurationProvider)
                .ToListAsync();
         }
 
         public async Task<SocialEventModel> GetSocialEventById(Guid id)
         {
-            return new SocialEventModel(await GetById(id));
+            return _mapper.Map<SocialEventModel>(await GetById(id));
         }
         public async Task<SocialEvent> GetById(Guid id)
         {
@@ -98,7 +93,9 @@ namespace Mu3een.Services
 
         public async Task<IEnumerable<SocialEventVolunteerModel>> GetEventVolunteers(Guid id)
         {
-            return await _db.SocialEventVolunteers.Include(x => x.Volunteer).Where(x => x.SocialEventId == id).Select(x => new SocialEventVolunteerModel(x)).ToListAsync();
+            return await _db.SocialEventVolunteers.Include(x => x.Volunteer).Where(x => x.SocialEventId == id)
+                .ProjectTo<SocialEventVolunteerModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
         }
         public async Task ApplyTo(Guid id, Guid volunteerId)
         {
@@ -117,12 +114,12 @@ namespace Mu3een.Services
                 }
                 else
                 {
-                    throw new AppException("Volunteers number is full !");
+                    throw new Exception("Volunteers number is full !");
                 }
             }
             else
             {
-                throw new AppException("has already been requested");
+                throw new Exception("has already been requested");
             }
         }
 
@@ -155,7 +152,7 @@ namespace Mu3een.Services
             if (volunteerSocialEvent != null)
             {
                 int count = await _db.SocialEventVolunteers.Where(x => x.SocialEventId == id && x.VolunteerStatus == VolunteerSocialEventStatus.Accept).CountAsync();
-                if ((count +1 ) < (await GetById(id)).VolunteerRequried!)
+                if ((count + 1) < (await GetById(id)).VolunteerRequried!)
                 {
                     volunteerSocialEvent.VolunteerStatus = VolunteerSocialEventStatus.Accept;
                     _db.SocialEventVolunteers.Update(volunteerSocialEvent);
@@ -163,7 +160,7 @@ namespace Mu3een.Services
                 }
                 else
                 {
-                    throw new AppException("Volunteers number is full !");
+                    throw new Exception("Volunteers number is full !");
                 }
 
             }

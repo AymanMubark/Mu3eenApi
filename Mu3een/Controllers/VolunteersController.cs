@@ -1,24 +1,22 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Mu3een.Extensions;
+using Mu3een.IServices;
 using Mu3een.Models;
-using Mu3een.Services;
 
 namespace Mu3een.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class VolunteersController : ControllerBase
     {
         private readonly IVolunteerService _volunteerService;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private string baseUrl;
 
-        public VolunteersController(IVolunteerService volunteerService, IHttpContextAccessor contextAccessor)
+        public VolunteersController(IVolunteerService volunteerService)
         {
             _volunteerService = volunteerService;
-            _contextAccessor = contextAccessor;
-            var request = _contextAccessor.HttpContext!.Request;
-            baseUrl = $"{request.Scheme}://{request.Host}";
         }
 
         /// <summary>
@@ -29,9 +27,10 @@ namespace Mu3een.Controllers
 
 
         [HttpPost("VerifyPhone")]
+        [AllowAnonymous]
         public async Task<ActionResult<string>> VerifyPhone([FromBody] string phone)
         {
-            return Ok(await _volunteerService.Login(phone));
+            return Ok(await _volunteerService.VerifyPhone(phone));
         }
 
         /// <summary>
@@ -40,6 +39,7 @@ namespace Mu3een.Controllers
         /// <param name="model"></param>
         /// <returns>AuthToken</returns>
         [HttpPost("VerifyOTP")]
+        [AllowAnonymous]
         public async Task<ActionResult<VerifyOTPResponseModel>> VerifyOTP(VerifyOTPModel model)
         {
             return Ok(await _volunteerService.VerifyOTP(model.Phone, model.OTP));
@@ -50,7 +50,8 @@ namespace Mu3een.Controllers
         /// </summary>
         /// <returns>volunteer</returns>
         [HttpGet]
-        public async Task<ActionResult<VolunteerModel>> Get([FromQuery] VolunteerSearchModel model)
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<VolunteerModel>>> Get([FromQuery] VolunteerSearchModel model)
         {
             return Ok(await _volunteerService.GetAll(model));
         }
@@ -63,7 +64,21 @@ namespace Mu3een.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<VolunteerModel>> Get(Guid id)
         {
-            return Ok(await _volunteerService.GetVolunteerById(id));
+            var model = await _volunteerService.GetVolunteerById(id);
+            return Ok(model);
+        }
+        
+        /// <summary>
+        /// Get volunteer by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>volunteer</returns>
+        [HttpGet("me")]
+        [Authorize(Roles = "Volunteer")]
+        public async Task<ActionResult<VolunteerModel>> Get()
+        {
+            var model = await _volunteerService.GetVolunteerById(User.GetUserId());
+            return Ok(model);
         }
 
         /// <summary>
@@ -76,6 +91,18 @@ namespace Mu3een.Controllers
         {
             return Ok(await _volunteerService.GetRewardsById(id));
         }
+        
+        /// <summary>
+        /// Get Rewords
+        /// </summary>
+        /// <param name="id">volunteer Id</param>
+        /// <returns></returns>
+        [HttpGet("me/Rewards")]
+        [Authorize(Roles = "Volunteer")]
+        public async Task<ActionResult<IEnumerable<RewardModel>>> GetRewords()
+        {
+            return Ok(await _volunteerService.GetRewardsById(User.GetUserId()));
+        }
 
 
         /// <summary>
@@ -87,17 +114,34 @@ namespace Mu3een.Controllers
         public async Task<ActionResult<IEnumerable<SocialEventVolunteerModel>>> GetSocialEvents(Guid id)
         {
             return Ok(await _volunteerService.GetSocialEventsById(id));
-        } 
+        }
 
-    
+        /// <summary>
+        /// Get Social Services
+        /// </summary>
+        /// <param name="id">volunteer Id</param>
+        /// <returns></returns>
+        [HttpGet("me/SocialEvents")]
+        [Authorize(Roles = "Volunteer")]
+        public async Task<ActionResult<IEnumerable<SocialEventVolunteerModel>>> GetSocialEvents()
+        {
+            return Ok(await _volunteerService.GetSocialEventsById(User.GetUserId()));
+        }
+
+        [HttpPut("me")]
+        [RequestSizeLimit(long.MaxValue)]
+        [Authorize(Roles = "Volunteer")]
+        public async Task<ActionResult<VolunteerModel>> Register([FromForm] VolunteerRegisterRequestModel model)
+        {
+            return Ok(await _volunteerService.Register(User.GetUserId(), model));
+        }
 
         [HttpPut("{id}")]
         [RequestSizeLimit(long.MaxValue)]
-        public async Task<ActionResult<VolunteerModel>> Put(Guid id,[FromForm] VolunteerRegisterRequestModel model)
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<VolunteerModel>> Put(Guid id, [FromForm] VolunteerRegisterRequestModel model)
         {
-          
-            return Ok(await _volunteerService.Register(id, model,baseUrl));
+            return Ok(await _volunteerService.Register(id, model));
         }
-
     }
 }

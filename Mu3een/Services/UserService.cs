@@ -1,12 +1,9 @@
 ﻿using Mu3een.Data;
 using Mu3een.Entities;
+using Mu3een.IServices;
 
 namespace Mu3een.Services
 {
-    public interface IUserService
-    {
-        public User? GetById(Guid id);
-    }
     public class UserService : IUserService
     {
         public readonly Mu3eenContext _db;
@@ -15,7 +12,7 @@ namespace Mu3een.Services
             _db = db;
         }
 
-        public User? GetById(Guid id)
+        public AppUser? GetById(Guid id)
         {
             return _db.Users.Find(id);
         }

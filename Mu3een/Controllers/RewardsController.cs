@@ -1,42 +1,42 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Mu3een.Extensions;
+using Mu3een.IServices;
 using Mu3een.Models;
-using Mu3een.Services;
 
 namespace Mu3een.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RewardsController : ControllerBase
     {
         private readonly IRewardService _rewardService;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private string baseUrl;
 
-        public RewardsController(IRewardService rewardService, IHttpContextAccessor contextAccessor)
+        public RewardsController(IRewardService rewardService)
         {
             _rewardService = rewardService;
-            _contextAccessor = contextAccessor;
-            var request = _contextAccessor.HttpContext!.Request;
-            baseUrl = $"{request.Scheme}://{request.Host}";
         }
 
         [HttpPost]
         [RequestSizeLimit(long.MaxValue)]
         public async Task<ActionResult> Post([FromForm] RewardAddRequestModel model)
         {
-            await _rewardService.Add(model, baseUrl);
+            await _rewardService.Add(model);
             return Ok();
         }
 
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<RewardModel>>> Get([FromQuery] RewardSearchModel model)
         {
             return Ok(await _rewardService.GetAll(model));
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult> Get(Guid id)
         {
             return Ok(await _rewardService.GetById(id));
@@ -50,9 +50,9 @@ namespace Mu3een.Controllers
         }
 
         [HttpPost("{id}/Redeem")]
-        public async Task<ActionResult> Redeem(Guid id, [FromBody] Guid volunteerId)
+        public async Task<ActionResult> Redeem(Guid id)
         {
-            await _rewardService.Redeem(id, volunteerId);
+            await _rewardService.Redeem(id, User.GetUserId());
             return Ok();
         }
 

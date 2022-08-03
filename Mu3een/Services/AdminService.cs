@@ -1,52 +1,54 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Mu3een.Authorization;
+﻿using Mu3een.IServices;
+using Microsoft.EntityFrameworkCore;
 using Mu3een.Data;
 using Mu3een.Entities;
-using Mu3een.Helpers;
+using Mu3een.Interfaces;
 using Mu3een.Models;
+using Microsoft.AspNetCore.Identity;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using System.Data;
 
 namespace Mu3een.Services
 {
-    public interface IAdminService
-    {
-        public Task<AdminLoginResponseModel> Login(AdminLoginRequestModel model);
-        public Task<AdminCountsReportModel> GetAdminCountsReport();
-        public Task<SocailEventsReport> GetSocailEventsReport();
-        public Task<IEnumerable<AdminModel>> GetAll(AdminSearchModel model);
-        public Task<AdminModel> Add(AdminRequestModel model, string baseUrl);
-        public Task<AdminModel> Update(Guid id, AdminRequestModel model, string baseUrl);
-        public Task<Admin> GetById(Guid id);
-    }
     public class AdminService : IAdminService
     {
         public readonly Mu3eenContext _db;
-        public readonly IJwtUtils _iJwtUtils;
-        public readonly FilesHelper _filesHelper;
+        private readonly IConfiguration _configuration;
+        public readonly ITokenService _tokenService;
+        private readonly IPhotoService _photoService;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IMapper _mapper;
 
-        public AdminService(Mu3eenContext db, IJwtUtils jwtUtils, FilesHelper filesHelper)
+        public AdminService(Mu3eenContext db, IPhotoService photoService, ITokenService tokenService, UserManager<AppUser> userManager, IMapper mapper, IConfiguration configuration, IDbConnection dbConnection)
         {
             _db = db;
-            _iJwtUtils = jwtUtils;
-            _filesHelper = filesHelper;
+            _photoService = photoService;
+            _tokenService = tokenService;
+            _userManager = userManager;
+            _mapper = mapper;
+            _configuration = configuration;
         }
 
-        public async Task<AdminModel> Add(AdminRequestModel model, string baseUrl)
+        public async Task<AdminModel> Add(AdminRequestModel model)
         {
 
-            Admin admin = new();
-            admin.Name = model.Name;
-            admin.UserName = model.UserName;
-            admin.Email = model.Email;
-            admin.Password = model.Password;
-            admin.Role = Role.Admin;
+            Admin admin = _mapper.Map<Admin>(model);
+
+
             if (model.Image != null)
             {
-                var image = baseUrl + "/" + (await _filesHelper.UploadFile(model.Image));
-                admin.ImageUrl = image;
+                var result = await _photoService.AddPhotoAsync(model.Image);
+                if (result.Error != null) throw new Exception(result.Error.Message);
+                admin.ImageUrl = result.Url.AbsoluteUri;
+                admin.ImageId = result.PublicId;
             }
-            await _db.AddAsync(admin);
-            await _db.SaveChangesAsync();
-            return new AdminModel();
+
+            await _userManager.CreateAsync(admin, model.Password);
+
+            await _userManager.AddToRoleAsync(admin, "Admin");
+
+            return _mapper.Map<AdminModel>(admin);
         }
         public async Task<Admin> GetById(Guid id)
         {
@@ -55,52 +57,63 @@ namespace Mu3een.Services
             return admin;
         }
 
-        public async Task<AdminModel> Update(Guid id, AdminRequestModel model, string baseUrl)
+        public async Task<AdminModel> Update(Guid id, AdminUpdateRequestModel model)
         {
-            Admin admin = await GetById(id);
+            Admin? admin = await _db.Admins.FindAsync(id);
             admin.Name = model.Name;
             admin.Email = model.Email;
             if (model.Image != null)
             {
-                var image = baseUrl + "/" + (await _filesHelper.UploadFile(model.Image));
-                admin.ImageUrl = image;
+                var result = await _photoService.AddPhotoAsync(model.Image);
+                if (result.Error != null) throw new Exception(result.Error.Message);
+                admin.ImageUrl = result.Url.AbsoluteUri;
+                admin.ImageId = result.PublicId;
             }
             _db.Update(admin);
             await _db.SaveChangesAsync();
-            return new AdminModel(admin);
+            return _mapper.Map<AdminModel>(admin);
         }
 
         public async Task<AdminLoginResponseModel> Login(AdminLoginRequestModel model)
         {
-            Admin? admin = await _db.Admins.SingleOrDefaultAsync(x => x.UserName == model.Username && x.Password == model.Password);
+
+            Admin? admin = await _db.Admins.SingleOrDefaultAsync(x => x.UserName == model.Username);
 
             if (admin == null)
             {
-                throw new AppException("login invalid");
+                throw new Exception("admin invalid");
             }
+
+            if (!await _userManager.CheckPasswordAsync(admin, model.Password))
+            {
+                throw new Exception("login invalid");
+            }
+
             return new AdminLoginResponseModel()
             {
-                Token = _iJwtUtils.GenerateJwtToken(admin),
-                User = new AdminModel(admin),
-                Role = nameof(Role.Admin),
+                Token = await _tokenService.CreateToken(admin),
+                User = _mapper.Map<AdminModel>(admin)
             };
         }
 
         public async Task<IEnumerable<AdminModel>> GetAll(AdminSearchModel model)
         {
-            return await _db.Admins.Where(x => x.Name!.ToLower().Contains(model.Key ?? "".ToLower()) || x.UserName!.ToLower().Contains(model.Key ?? "".ToLower())).Select(x => new AdminModel(x)).ToListAsync();
+            return await _db.Admins.Where(x => x.Name!.ToLower().Contains(model.Key ?? "".ToLower())
+            || x.UserName!.ToLower().Contains(model.Key ?? "".ToLower()))
+                .ProjectTo<AdminModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
         }
 
         public async Task<AdminCountsReportModel> GetAdminCountsReport()
         {
             var VolunteersCount = await _db.Volunteers.Where(x => x.Status && x.Name != null).CountAsync();
             var InstitutionsCount = await _db.Institutions.Where(x => x.Status).CountAsync();
-            var Rewards = await _db.Rewards.Where(x => x.Status).CountAsync();
+            var RewardsCount = await _db.Rewards.Where(x => x.Status).CountAsync();
             return new AdminCountsReportModel()
             {
-                Institutions = VolunteersCount,
-                Rewards = InstitutionsCount,
                 Volunteers = VolunteersCount,
+                Institutions = InstitutionsCount,
+                Rewards = RewardsCount,
             };
         }
 
@@ -111,11 +124,11 @@ namespace Mu3een.Services
                 Count = x.Count(),
                 Name = x.First().SocialEventType!.Name,
             }).ToListAsync();
-            int total = await _db.SocialEvents.Where(x => x.Status).CountAsync();
+
             return new SocailEventsReport()
             {
-                Total = total,
-                TypesCount= socailEventTypeCount,
+                Total = socailEventTypeCount.Select(x => x.Count).Sum(),
+                TypesCount = socailEventTypeCount.ToList(),
             };
         }
     }

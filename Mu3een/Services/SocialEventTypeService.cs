@@ -1,17 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Mu3een.Data;
 using Mu3een.Entities;
+using Mu3een.IServices;
 
 namespace Mu3een.Services
 {
-    public interface ISocialEventTypeService
-    {
-        public Task<IEnumerable<SocialEventType>> GetAll();
-        public Task<SocialEventType> GetById(Guid id);
-        public Task Add(SocialEventType model);
-        public Task Update(Guid id, SocialEventType model);
-        public Task Delete(Guid id);
-    }
     public class SocialEventTypeService : ISocialEventTypeService
     {
         private readonly Mu3eenContext _db;

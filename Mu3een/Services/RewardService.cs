@@ -1,55 +1,47 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using Mu3een.Data;
 using Mu3een.Entities;
-using Mu3een.Helpers;
+using Mu3een.IServices;
 using Mu3een.Models;
 
 namespace Mu3een.Services
 {
-    public interface IRewardService
-    {
-        public Task<Reward> GetById(Guid id);
-        public Task<RewardModel> GetRewardById(Guid id);
-        public Task<int> GetCount();
-        public Task<IEnumerable<RewardModel>> GetAll(RewardSearchModel model);
-        public Task Add(RewardAddRequestModel model, string baseUrl);
-        public Task Delete(Guid id);
-        public Task Redeem(Guid id, Guid volunteerId);
-    }
     public class RewardService : IRewardService
     {
         private readonly Mu3eenContext _db;
-        public readonly FilesHelper _filesHelper;
+        private readonly IMapper _mapper;
+        private readonly IPhotoService _photoService;
 
 
-        public RewardService(Mu3eenContext db, FilesHelper filesHelper)
+        public RewardService(Mu3eenContext db, IMapper mapper, IPhotoService photoService)
         {
             _db = db;
-            _filesHelper = filesHelper;
+            _mapper = mapper;
+            _photoService = photoService;
         }
 
-        public async Task Add(RewardAddRequestModel model, string baseUrl)
+        public async Task Add(RewardAddRequestModel model)
         {
-            string? image = null;
-            if (model.Image != null)
-                image = baseUrl + "/" + (await _filesHelper.UploadFile(model.Image));
 
-            var Reward = await _db.Rewards.AddAsync(new Reward
+            Reward reward = _mapper.Map<Reward>(model);
+
+            if (model.Image != null)
             {
-                InstitutionId = model.InstitutionId,
-                Name = model.Name,
-                Content = model.Content,
-                Numbers = model.Numbers,
-                Points = model.Points,
-                ImageUrl = image,
-                ExpiryDate = model.ExpiryDate,
-            });
+                var result = await _photoService.AddPhotoAsync(model.Image);
+                if (result.Error != null) throw new Exception(result.Error.Message);
+                reward.ImageUrl = result.Url.AbsoluteUri;
+                reward.ImageId = result.PublicId;
+            }
+            await _db.Rewards.AddAsync(reward);
             await _db.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<RewardModel>> GetAll(RewardSearchModel model)
         {
-            return await _db.Rewards.Where(x => x.Status && x.Name!.ToLower().Contains(model.Key??"".ToLower())).Select(x => new RewardModel(x)).ToListAsync();
+            return await _db.Rewards.Where(x => x.Status && x.Name!.ToLower().Contains(model.Key??"".ToLower()))
+                 .ProjectTo<RewardModel>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
         public async Task<int> GetCount()
@@ -59,7 +51,7 @@ namespace Mu3een.Services
 
         public async Task<RewardModel> GetRewardById(Guid id)
         {
-            return new RewardModel(await GetById(id));
+            return _mapper.Map<RewardModel>(await GetById(id));
         }
 
         public async Task<Reward> GetById(Guid id)
@@ -93,7 +85,7 @@ namespace Mu3een.Services
                 {
                     if (volunteer.Points < reward.Points)
                     {
-                        throw new AppException("You don’t have enough points.");
+                        throw new Exception("You don’t have enough points.");
                     }
 
                     volunteerReward = new VolunteerReward()
@@ -113,7 +105,7 @@ namespace Mu3een.Services
             }
             else
             {
-                throw new AppException("reward already redeemed check your reward list!");
+                throw new Exception("reward already redeemed check your reward list!");
             }
         }
 

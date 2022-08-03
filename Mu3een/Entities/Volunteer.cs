@@ -6,13 +6,8 @@ namespace Mu3een.Entities
     {
         Male,Female
     }
-    public class Volunteer : User
+    public class Volunteer : AppUser
     {
-        public Volunteer()
-        {
-            Role = Role.Volunteer;
-        }
-        public string? Phone { get; set; }
         [MaxLength(4)]
         public string? OTP { get; set; }
         public Gender? Gender { get; set; }

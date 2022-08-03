@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Mu3een.Authorization;
 using Mu3een.Data;
 using Mu3een.Entities;
 using Mu3een.Services;
@@ -9,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Mu3een.IServices;
 
 namespace Mu3een.Test
 {

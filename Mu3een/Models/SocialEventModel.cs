@@ -4,27 +4,6 @@ namespace Mu3een.Models
 {
     public class SocialEventModel
     {
-        public SocialEventModel()
-        {
-
-        }
-        public SocialEventModel(SocialEvent model)
-        {
-            Id = model.Id;
-            Name = model.Name;
-            Description = model.Description;
-            InstitutionId = model.InstitutionId;
-            SocialEventType = new SocialEventTypeModel(model.SocialEventType!);
-            //Region = new RegionModel(model.Region!);
-            VolunteerRequried = model.VolunteerRequried;
-            Points = model.Points;
-            ExpiryDate = model.ExpiryDate;
-            Address = model.Address;
-            Latitude = model.Latitude;
-            Longitude = model.Longitude;
-            CreatedAt = model.CreatedAt;
-            imageUrl = model.ImageUrl;
-        }
         public Guid? Id { get; set; }
         public string? Description { get; set; }
         public string? Name { get; set; }

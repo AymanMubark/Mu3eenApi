@@ -1,42 +1,55 @@
 using Microsoft.EntityFrameworkCore;
-using Mu3een.Authorization;
+using Microsoft.OpenApi.Models;
 using Mu3een.Data;
-using Mu3een.Helpers;
+using Mu3een.Extensions;
 using Mu3een.Services;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddControllers().AddJsonOptions(x =>
 {
-    var services = builder.Services;
-    services.AddControllers().AddJsonOptions(x =>
-    {
-    // serialize enums as strings in api responses (e.g. Role)
     x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
+});
 
-    services.AddDbContext<Mu3eenContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("Mu3eenContext")));
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    services.AddEndpointsApiExplorer();
-    services.AddSwaggerGen();
-    services.AddHttpContextAccessor();
+// configure DI for application services
+builder.Services.AddApplicationService(builder.Configuration);
+builder.Services.IdentityService(builder.Configuration);
 
-    // configure strongly typed settings object
-    services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
-    // configure DI for application services
-    services.AddScoped<IJwtUtils, JwtUtils>();
-    services.AddScoped<FilesHelper>();
-    services.AddScoped<IUserService, UserService>();
-    services.AddScoped<IRegionService, RegionService>();
-    services.AddScoped<ISocialEventTypeService, SocialEventTypeService>();
-    services.AddScoped<ISocialEventService, SocialEventService>();
-    services.AddScoped<IVolunteerService, VolunteerService>();
-    services.AddScoped<IInstitutionService, InstitutionService>();
-    services.AddScoped<IRewardService, RewardService>();
-    services.AddScoped<IAdminService, AdminService>();
-}
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mu3een App", Version = "v1" });
+    c.AddSecurityDefinition("Bearer",
+     new OpenApiSecurityScheme
+     {
+         In = ParameterLocation.Header,
+         Description = "Bearer Token need to be Inserted..",
+         Name = "Authorization",
+         Type = SecuritySchemeType.ApiKey,
+         Scheme = "Bearer"
+     });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
+                    {
+                        new OpenApiSecurityScheme
+                      {
+                        Reference = new OpenApiReference
+                          {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                          },
+                          Scheme = "oauth2",
+                          Name = "Bearer",
+                          In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                    }});
+});
 
 var app = builder.Build();
 
@@ -47,9 +60,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
-app.UseStaticFiles();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
@@ -60,11 +74,9 @@ app.UseCors(x => x
     .AllowAnyHeader());
 
 // global error handler
-app.UseMiddleware<ErrorHandlerMiddleware>();
-
-// custom jwt auth middleware
-app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
+
+await app.initalApp();
 
 app.Run();
