@@ -7,6 +7,7 @@ using AutoMapper;
 using Mu3een.Interfaces;
 using Mu3een.IServices;
 using Microsoft.AspNetCore.Identity;
+using Mu3een.Errors;
 
 namespace Mu3een.Services
 {
@@ -55,7 +56,7 @@ namespace Mu3een.Services
 
             if (!await _userManager.CheckPasswordAsync(institution, password))
             {
-                throw new Exception("login invalid");
+                throw new AppException("login invalid");
             }
 
             return new InstitutionLoginResponseModel()
@@ -70,7 +71,7 @@ namespace Mu3een.Services
             Institution? institution = await _db.Institutions.SingleOrDefaultAsync(x => x.Email == model.Email);
             if (institution != null)
             {
-                throw new Exception("email already registerd");
+                throw new AppException("email already registerd");
             }
 
             institution = new Institution

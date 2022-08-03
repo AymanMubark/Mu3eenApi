@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Mu3een.Data;
 using Mu3een.Entities;
+using Mu3een.Errors;
 using Mu3een.IServices;
 using Mu3een.Models;
 
@@ -89,7 +90,7 @@ namespace Mu3een.Services
                 {
                     if (volunteer.Points < reward.Points)
                     {
-                        throw new Exception("You don’t have enough points.");
+                        throw new AppException("You don’t have enough points.");
                     }
 
                     volunteerReward = new VolunteerReward()
@@ -109,7 +110,7 @@ namespace Mu3een.Services
             }
             else
             {
-                throw new Exception("reward already redeemed check your reward list!");
+                throw new AppException("reward already redeemed check your reward list!");
             }
         }
 

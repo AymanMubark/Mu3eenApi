@@ -7,6 +7,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Mu3een.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Mu3een.Errors;
 
 namespace Mu3een.Services
 {
@@ -85,7 +86,7 @@ namespace Mu3een.Services
             }
             if (volunteer.OTP != otp)
             {
-                throw new Exception("OTP isn't valid");
+                throw new AppException("OTP isn't valid");
             }
 
             var token = await _tokenService.CreateToken(volunteer);

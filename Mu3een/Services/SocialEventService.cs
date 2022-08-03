@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Mu3een.Data;
 using Mu3een.Entities;
+using Mu3een.Errors;
 using Mu3een.IServices;
 using Mu3een.Models;
 using System.Data;
@@ -118,12 +119,12 @@ namespace Mu3een.Services
                 }
                 else
                 {
-                    throw new Exception("Volunteers number is full !");
+                    throw new AppException("Volunteers number is full !");
                 }
             }
             else
             {
-                throw new Exception("has already been requested");
+                throw new AppException("has already been requested");
             }
         }
 
@@ -164,7 +165,7 @@ namespace Mu3een.Services
                 }
                 else
                 {
-                    throw new Exception("Volunteers number is full !");
+                    throw new AppException("Volunteers number is full !");
                 }
 
             }

@@ -7,6 +7,7 @@ using Mu3een.Models;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Mu3een.Errors;
 
 namespace Mu3een.Services
 {
@@ -80,12 +81,12 @@ namespace Mu3een.Services
 
             if (admin == null)
             {
-                throw new Exception("admin invalid");
+                throw new KeyNotFoundException("admin invalid");
             }
 
             if (!await _userManager.CheckPasswordAsync(admin, model.Password))
             {
-                throw new Exception("login invalid");
+                throw new AppException("login invalid");
             }
 
             return new AdminLoginResponseModel()

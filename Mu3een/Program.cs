@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Mu3een.Data;
 using Mu3een.Extensions;
+using Mu3een.Middleware;
 using Mu3een.Services;
 using System.Text.Json.Serialization;
 
@@ -52,6 +53,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
