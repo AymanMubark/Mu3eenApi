@@ -9,10 +9,10 @@ namespace Mu3een.IServices
         public Task<int> GetCount();
         public Task<VerifyOTPResponseModel> VerifyOTP(string phone, string otp);
         public Task<VolunteerModel> GetVolunteerById(Guid id);
-        public Task<List<VolunteerModel>> GetAll(VolunteerSearchModel model);
+        public Task<PagedList<VolunteerModel>> GetAll(VolunteerSearchModel model);
         public Task<VolunteerModel> Register(Guid id, VolunteerRegisterRequestModel model);
-        public Task<IEnumerable<RewardModel>> GetRewardsById(Guid id);
-        public Task<IEnumerable<SocialEventVolunteerModel>> GetSocialEventsById(Guid id);
+        public Task<PagedList<RewardModel>> GetRewardsById(Guid id, PaginationParams model);
+        public Task<PagedList<SocialEventVolunteerModel>> GetSocialEventsById(Guid id, PaginationParams model);
         public Task<Volunteer> GetById(Guid id);
         public Task<Volunteer?> GetByPhone(string phone);
     }

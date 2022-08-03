@@ -73,7 +73,7 @@ namespace Mu3een.Services
                 throw new Exception("email already registerd");
             }
 
-            institution =new Institution
+            institution = new Institution
             {
                 UserName = model.Phone,
                 Email = model.Email,
@@ -121,29 +121,33 @@ namespace Mu3een.Services
             return _mapper.Map<InstitutionModel>(institution);
         }
 
-        public async Task<IEnumerable<RewardModel>> GetRewardsById(Guid id)
+        public async Task<PagedList<RewardModel>> GetRewardsById(Guid id, PaginationParams model)
         {
-            return await _db.Rewards.Where(x => x.InstitutionId == id)
-                 .ProjectTo<RewardModel>(_mapper.ConfigurationProvider)
-                 .AsNoTracking()
-                 .ToListAsync();
+            var query = _db.Rewards.Where(x => x.InstitutionId == id);
+
+            return await PagedList<RewardModel>.CreateAsync(query
+                   .ProjectTo<RewardModel>(_mapper.ConfigurationProvider)
+                   .AsNoTracking(), model.PageNumber, model.PageSize);
+
         }
-        public async Task<IEnumerable<SocialEventModel>> GetSocialEventsById(Guid id)
+        public async Task<PagedList<SocialEventModel>> GetSocialEventsById(Guid id, PaginationParams model)
         {
-            return await _db.SocialEvents
+            var query = _db.SocialEvents
                 .Include(x => x.SocialEventType)
-                .Where(x => x.InstitutionId == id && x.Status)
-                .ProjectTo<SocialEventModel>(_mapper.ConfigurationProvider)
-                .AsNoTracking()
-                .ToListAsync();
+                .Where(x => x.InstitutionId == id && x.Status);
+
+            return await PagedList<SocialEventModel>.CreateAsync(query
+               .ProjectTo<SocialEventModel>(_mapper.ConfigurationProvider)
+               .AsNoTracking(), model.PageNumber, model.PageSize);
         }
 
-        public Task<List<InstitutionModel>> GetAll(InstitutionSearchModel model)
+        public async Task<PagedList<InstitutionModel>> GetAll(InstitutionSearchModel model)
         {
-            return _db.Institutions.Where(x => x.UserName!.ToLower().Contains(model.Key ?? "".ToLower()) || x.PhoneNumber!.ToLower().Contains(model.Key ?? "".ToLower()))
+            var query = _db.Institutions.Where(x => x.UserName!.ToLower().Contains(model.Key ?? "".ToLower()) || x.PhoneNumber!.ToLower().Contains(model.Key ?? "".ToLower())).AsQueryable();
+
+            return await PagedList<InstitutionModel>.CreateAsync(query
                 .ProjectTo<InstitutionModel>(_mapper.ConfigurationProvider)
-                .AsNoTracking()
-                .ToListAsync();
+                .AsNoTracking(), model.PageNumber, model.PageSize);
         }
     }
 }

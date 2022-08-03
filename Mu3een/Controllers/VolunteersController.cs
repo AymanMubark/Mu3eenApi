@@ -51,9 +51,11 @@ namespace Mu3een.Controllers
         /// <returns>volunteer</returns>
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<VolunteerModel>>> Get([FromQuery] VolunteerSearchModel model)
+        public async Task<ActionResult<PagedList<VolunteerModel>>> Get([FromQuery] VolunteerSearchModel model)
         {
-            return Ok(await _volunteerService.GetAll(model));
+            var result = await _volunteerService.GetAll(model);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result);
         }
 
         /// <summary>
@@ -87,9 +89,11 @@ namespace Mu3een.Controllers
         /// <param name="id">volunteer Id</param>
         /// <returns></returns>
         [HttpGet("{id}/Rewards")]
-        public async Task<ActionResult<IEnumerable<RewardModel>>> GetRewords(Guid id)
+        public async Task<ActionResult<PagedList<RewardModel>>> GetRewords(Guid id, [FromQuery] PaginationParams model)
         {
-            return Ok(await _volunteerService.GetRewardsById(id));
+            var result = await _volunteerService.GetRewardsById(id,model);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result);
         }
         
         /// <summary>
@@ -99,9 +103,11 @@ namespace Mu3een.Controllers
         /// <returns></returns>
         [HttpGet("me/Rewards")]
         [Authorize(Roles = "Volunteer")]
-        public async Task<ActionResult<IEnumerable<RewardModel>>> GetRewords()
+        public async Task<ActionResult<PagedList<RewardModel>>> GetRewords([FromQuery] PaginationParams model)
         {
-            return Ok(await _volunteerService.GetRewardsById(User.GetUserId()));
+            var result = await _volunteerService.GetRewardsById(User.GetUserId(), model);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result);
         }
 
 
@@ -111,9 +117,11 @@ namespace Mu3een.Controllers
         /// <param name="id">volunteer Id</param>
         /// <returns></returns>
         [HttpGet("{id}/SocialEvents")]
-        public async Task<ActionResult<IEnumerable<SocialEventVolunteerModel>>> GetSocialEvents(Guid id)
+        public async Task<ActionResult<PagedList<SocialEventVolunteerModel>>> GetSocialEvents(Guid id,[FromQuery] PaginationParams model)
         {
-            return Ok(await _volunteerService.GetSocialEventsById(id));
+            var result = await _volunteerService.GetSocialEventsById(id, model);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result);
         }
 
         /// <summary>
@@ -123,9 +131,11 @@ namespace Mu3een.Controllers
         /// <returns></returns>
         [HttpGet("me/SocialEvents")]
         [Authorize(Roles = "Volunteer")]
-        public async Task<ActionResult<IEnumerable<SocialEventVolunteerModel>>> GetSocialEvents()
+        public async Task<ActionResult<PagedList<SocialEventVolunteerModel>>> GetSocialEvents([FromQuery] PaginationParams model)
         {
-            return Ok(await _volunteerService.GetSocialEventsById(User.GetUserId()));
+            var result = await _volunteerService.GetSocialEventsById(User.GetUserId(), model);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result);
         }
 
         [HttpPut("me")]

@@ -105,21 +105,24 @@ namespace Mu3een.Services
             return await _db.Volunteers.Where(x => x.Status && x.UserName != null).CountAsync();
         }
 
-        public async Task<IEnumerable<RewardModel>> GetRewardsById(Guid id)
+        public async Task<PagedList<RewardModel>> GetRewardsById(Guid id, PaginationParams model)
         {
-            return await _db.VolunteerRewards.Include(x => x.Reward)
-                .Where(x => x.VolunteerId == id)
-                .AsNoTracking()
-                .ProjectTo<RewardModel>(_mapper.ConfigurationProvider).ToListAsync();
+            var query = _db.VolunteerRewards.Include(x => x.Reward).Where(x => x.VolunteerId == id).AsQueryable();
+
+            return await PagedList<RewardModel>.CreateAsync(query
+              .ProjectTo<RewardModel>(_mapper.ConfigurationProvider)
+              .AsNoTracking(), model.PageNumber, model.PageSize);
         }
 
-        public async Task<IEnumerable<SocialEventVolunteerModel>> GetSocialEventsById(Guid id)
+        public async Task<PagedList<SocialEventVolunteerModel>> GetSocialEventsById(Guid id, PaginationParams model)
         {
-            return await _db.SocialEventVolunteers.Include(x => x.SocialEvent)
+            var query = _db.SocialEventVolunteers.Include(x => x.SocialEvent)
                 .ThenInclude(x => x!.SocialEventType)
-                .Where(x => x.VolunteerId == id)
-                .ProjectTo<SocialEventVolunteerModel>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .Where(x => x.VolunteerId == id).AsQueryable();
+
+            return await PagedList<SocialEventVolunteerModel>.CreateAsync(query
+              .ProjectTo<SocialEventVolunteerModel>(_mapper.ConfigurationProvider)
+              .AsNoTracking(), model.PageNumber, model.PageSize);
         }
 
 
@@ -127,7 +130,7 @@ namespace Mu3een.Services
         {
 
             Volunteer? volunteer = await _db.Volunteers.FindAsync(id);
-            if(volunteer == null) throw new Exception();
+            if (volunteer == null) throw new Exception();
             volunteer.Name = model.Name;
             volunteer.Age = model.Age;
             volunteer.Gender = model.Gender;
@@ -150,13 +153,16 @@ namespace Mu3een.Services
 
         }
 
-        public Task<List<VolunteerModel>> GetAll(VolunteerSearchModel model)
+        public async Task<PagedList<VolunteerModel>> GetAll(VolunteerSearchModel model)
         {
-            return _db.Volunteers.Where(x => x.UserName != null
+            var query = _db.Volunteers.Where(x => x.UserName != null
                    && (x.UserName.ToLower().Contains(model.Key ?? "".ToLower())
                    || x.PhoneNumber!.ToLower().Contains(model.Key ?? "".ToLower())))
-                .AsNoTracking()
-                .ProjectTo<VolunteerModel>(_mapper.ConfigurationProvider).AsNoTracking().ToListAsync();
+                .AsQueryable();
+
+            return await PagedList<VolunteerModel>.CreateAsync(query
+                .ProjectTo<VolunteerModel>(_mapper.ConfigurationProvider)
+                .AsNoTracking(), model.PageNumber, model.PageSize);
         }
     }
 }

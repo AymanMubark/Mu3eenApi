@@ -32,9 +32,11 @@ namespace Mu3een.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<SocialEventModel>>> Get( [FromQuery] SocialEventSearchModel model)
+        public async Task<ActionResult<PagedList<SocialEventModel>>> Get( [FromQuery] SocialEventSearchModel model)
         {
-            return Ok(await _socialEventService.GetAll(model));
+            var result = await _socialEventService.GetAll(model);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]

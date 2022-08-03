@@ -1,6 +1,6 @@
 ﻿namespace Mu3een.Models
 {
-    public class VolunteerSearchModel
+    public class VolunteerSearchModel : PaginationParams
     {
         public string? Key { get; set; }
     }

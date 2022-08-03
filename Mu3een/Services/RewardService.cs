@@ -38,10 +38,14 @@ namespace Mu3een.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<RewardModel>> GetAll(RewardSearchModel model)
+        public async Task<PagedList<RewardModel>> GetAll(RewardSearchModel model)
         {
-            return await _db.Rewards.Where(x => x.Status && x.Name!.ToLower().Contains(model.Key??"".ToLower()))
-                 .ProjectTo<RewardModel>(_mapper.ConfigurationProvider).ToListAsync();
+            var query = _db.Rewards.Where(x => x.Status && x.Name!.ToLower().Contains(model.Key ?? "".ToLower())).AsQueryable();
+            
+            return await PagedList<RewardModel>.CreateAsync(query
+                .ProjectTo<RewardModel>(_mapper.ConfigurationProvider)
+                .AsNoTracking(), model.PageNumber, model.PageSize);
+
         }
 
         public async Task<int> GetCount()

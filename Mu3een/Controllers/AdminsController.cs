@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mu3een.Entities;
+using Mu3een.Extensions;
 using Mu3een.IServices;
 using Mu3een.Models;
 
@@ -35,13 +36,14 @@ namespace Mu3een.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<AdminModel>>> Get([FromQuery] AdminSearchModel model)
+        public async Task<ActionResult<PagedList<AdminModel>>> Get([FromQuery] AdminSearchModel model)
         {
-            return Ok(await _adminService.GetAll(model));
+            var admins = await _adminService.GetAll(model);
+            Response.AddPaginationHeader(admins.CurrentPage, admins.PageSize, admins.TotalCount, admins.TotalPages);
+            return Ok(admins);
         }
        
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<Admin>> Get( Guid id)
         {
             return Ok(await _adminService.GetById(id));
@@ -56,14 +58,12 @@ namespace Mu3een.Controllers
         }
 
         [HttpGet("AdminCountsReport")]
-        [AllowAnonymous]
         public async Task<ActionResult<AdminCountsReportModel>> GetAdminCountsReport()
         {
             return Ok(await _adminService.GetAdminCountsReport());
         }
 
         [HttpGet("SocailEventsReport")]
-        [AllowAnonymous]
         public async Task<ActionResult<SocailEventsReport>> GetSocailEventsReport()
         {
             return Ok(await _adminService.GetSocailEventsReport());

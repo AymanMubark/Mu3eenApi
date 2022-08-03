@@ -63,9 +63,9 @@ namespace Mu3een.Services
             await _db.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<SocialEventModel>> GetAll(SocialEventSearchModel model)
+        public async Task<PagedList<SocialEventModel>> GetAll(SocialEventSearchModel model)
         {
-            return await _db.SocialEvents
+            var query = _db.SocialEvents
                 .Include(x => x.SocialEventType)
                 .Include(x => x.Institution)
                 .Where(x =>
@@ -76,8 +76,12 @@ namespace Mu3een.Services
                 (model.SocialEventTypeid == null || x.SocialEventTypeId == model.SocialEventTypeid) &&
                 x.Status)
                .OrderByDescending(x => x.CreatedAt)
-               .ProjectTo<SocialEventModel>(_mapper.ConfigurationProvider)
-               .ToListAsync();
+               .AsQueryable();
+
+            return await PagedList<SocialEventModel>.CreateAsync(query
+                .ProjectTo<SocialEventModel>(_mapper.ConfigurationProvider)
+                .AsNoTracking(), model.PageNumber, model.PageSize);
+
         }
 
         public async Task<SocialEventModel> GetSocialEventById(Guid id)

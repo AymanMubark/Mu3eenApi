@@ -71,9 +71,14 @@ namespace Mu3een.Controllers
         /// </summary>
         /// <returns>InstitutionLoginResponseModel</returns>
         [HttpGet]
-        public async Task<ActionResult<List<InstitutionModel>>> Get([FromQuery] InstitutionSearchModel model)
+        public async Task<ActionResult<PagedList<InstitutionModel>>> Get([FromQuery] InstitutionSearchModel model)
         {
-            return Ok(await _institutionService.GetAll(model));
+
+            var result = await _institutionService.GetAll(model);
+
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+
+            return Ok(result);
         }
 
         /// <summary>
@@ -104,9 +109,11 @@ namespace Mu3een.Controllers
         /// <param name="id"></param>
         /// <returns>IEnumerable RewardModel</returns>
         [HttpGet("{id}/Rewards")]
-        public async Task<ActionResult<IEnumerable<RewardModel>>> GetRewards(Guid id)
+        public async Task<ActionResult<PagedList<RewardModel>>> GetRewards(Guid id, [FromQuery] PaginationParams model)
         {
-            return Ok(await _institutionService.GetRewardsById(id));
+            var result = await _institutionService.GetRewardsById(id, model);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result);
         }
 
         /// <summary>
@@ -115,9 +122,11 @@ namespace Mu3een.Controllers
         /// <param name="id"></param>
         /// <returns>IEnumerable RewardModel</returns>
         [HttpGet("me/Rewards")]
-        public async Task<ActionResult<IEnumerable<RewardModel>>> GetRewards()
+        public async Task<ActionResult<PagedList<RewardModel>>> GetRewards([FromQuery] PaginationParams model)
         {
-            return Ok(await _institutionService.GetRewardsById(User.GetUserId()));
+            var result = await _institutionService.GetRewardsById(User.GetUserId(), model);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result);
         }
 
         /// <summary>
@@ -126,9 +135,11 @@ namespace Mu3een.Controllers
         /// <param name="id"></param>
         /// <returns>IEnumerable SocialEventModel</returns>
         [HttpGet("{id}/SocialEvents")]
-        public async Task<ActionResult<IEnumerable<SocialEventModel>>> GetSocialEvents(Guid id)
+        public async Task<ActionResult<IEnumerable<SocialEventModel>>> GetSocialEvents(Guid id,[FromQuery] PaginationParams model)
         {
-            return Ok(await _institutionService.GetSocialEventsById(id));
+            var result = await _institutionService.GetSocialEventsById(id, model);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result);
         }
 
         /// <summary>
@@ -137,9 +148,11 @@ namespace Mu3een.Controllers
         /// <param name="id"></param>
         /// <returns>IEnumerable SocialEventModel</returns>
         [HttpGet("me/SocialEvents")]
-        public async Task<ActionResult<IEnumerable<SocialEventModel>>> GetSocialEvents()
+        public async Task<ActionResult<IEnumerable<SocialEventModel>>> GetSocialEvents(PaginationParams model)
         {
-            return Ok(await _institutionService.GetSocialEventsById(User.GetUserId()));
+            var result = await _institutionService.GetSocialEventsById(User.GetUserId(), model);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result);
         }
 
     }

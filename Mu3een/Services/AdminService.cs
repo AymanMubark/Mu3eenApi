@@ -7,7 +7,6 @@ using Mu3een.Models;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using System.Data;
 
 namespace Mu3een.Services
 {
@@ -20,7 +19,7 @@ namespace Mu3een.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
 
-        public AdminService(Mu3eenContext db, IPhotoService photoService, ITokenService tokenService, UserManager<AppUser> userManager, IMapper mapper, IConfiguration configuration, IDbConnection dbConnection)
+        public AdminService(Mu3eenContext db, IPhotoService photoService, ITokenService tokenService, UserManager<AppUser> userManager, IMapper mapper, IConfiguration configuration)
         {
             _db = db;
             _photoService = photoService;
@@ -96,12 +95,13 @@ namespace Mu3een.Services
             };
         }
 
-        public async Task<IEnumerable<AdminModel>> GetAll(AdminSearchModel model)
+        public async Task<PagedList<AdminModel>> GetAll(AdminSearchModel model)
         {
-            return await _db.Admins.Where(x => x.Name!.ToLower().Contains(model.Key ?? "".ToLower())
-            || x.UserName!.ToLower().Contains(model.Key ?? "".ToLower()))
-                .ProjectTo<AdminModel>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+            var query = _db.Admins.Where(x => x.Name!.ToLower().Contains(model.Key ?? "".ToLower())
+            || x.UserName!.ToLower().Contains(model.Key ?? "".ToLower())).AsQueryable();
+            return await PagedList<AdminModel>.CreateAsync(query
+             .ProjectTo<AdminModel>(_mapper.ConfigurationProvider)
+             .AsNoTracking(), model.PageNumber, model.PageSize);
         }
 
         public async Task<AdminCountsReportModel> GetAdminCountsReport()

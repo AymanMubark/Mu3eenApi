@@ -30,9 +30,11 @@ namespace Mu3een.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<RewardModel>>> Get([FromQuery] RewardSearchModel model)
+        public async Task<ActionResult<PagedList<RewardModel>>> Get([FromQuery] RewardSearchModel model)
         {
-            return Ok(await _rewardService.GetAll(model));
+            var result = await _rewardService.GetAll(model);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]

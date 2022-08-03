@@ -9,7 +9,7 @@ namespace Mu3een.IServices
         public Task SetCompleted(Guid id, Guid socialEventId);
         public Task<int> GetCount();
         public Task SetAccept(Guid id, Guid socialEventId);
-        public Task<IEnumerable<SocialEventModel>> GetAll(SocialEventSearchModel model);
+        public Task<PagedList<SocialEventModel>> GetAll(SocialEventSearchModel model);
         public Task<IEnumerable<SocialEventVolunteerModel>> GetEventVolunteers(Guid id);
         public Task<SocialEventModel> GetSocialEventById(Guid id);
         public Task<SocialEvent> GetById(Guid id);
