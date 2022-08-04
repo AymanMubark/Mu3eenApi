@@ -22,13 +22,13 @@ namespace Mu3een.Data
             
         }
 
-        public DbSet<Admin> Admins { get; set; }
-        public DbSet<Volunteer> Volunteers { get; set; }
-        public DbSet<Institution> Institutions { get; set; }
-        public DbSet<SocialEventType> SocialEventTypes { get; set; }
-        public DbSet<SocialEvent> SocialEvents { get; set; }
-        public DbSet<Reward> Rewards { get; set; }
-        public DbSet<SocialEventVolunteer> SocialEventVolunteers { get; set; }
-        public DbSet<VolunteerReward> VolunteerRewards { get; set; }
+        public DbSet<Admin> Admins { get; set; } = null!;
+        public DbSet<Volunteer> Volunteers { get; set; } = null!;
+        public DbSet<Institution> Institutions { get; set; } = null!;
+        public DbSet<SocialEventType> SocialEventTypes { get; set; } = null!;
+        public DbSet<SocialEvent> SocialEvents { get; set; } = null!;
+        public DbSet<Reward> Rewards { get; set; } = null!;
+        public DbSet<SocialEventVolunteer> SocialEventVolunteers { get; set; } = null!;
+        public DbSet<VolunteerReward> VolunteerRewards { get; set; } = null!;
     }
 }
