@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using API.Helpers;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using Microsoft.OpenApi.Models;
 
 namespace Mu3een.Extensions
 {
@@ -28,6 +29,39 @@ namespace Mu3een.Extensions
 
             services.AddDbContext<Mu3eenContext>(option => option.
             UseSqlServer(Configuration.GetConnectionString("Mu3eenContext")));
+
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mu3een App", Version = "v1" });
+                c.AddSecurityDefinition("Bearer",
+                 new OpenApiSecurityScheme
+                 {
+                     In = ParameterLocation.Header,
+                     Description = "Bearer Token need to be Inserted..",
+                     Name = "Authorization",
+                     Type = SecuritySchemeType.ApiKey,
+                     Scheme = "Bearer"
+                 });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
+                    {
+                        new OpenApiSecurityScheme
+                      {
+                        Reference = new OpenApiReference
+                          {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                          },
+                          Scheme = "oauth2",
+                          Name = "Bearer",
+                          In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                    }});
+            });
+
 
             return services;
         }
