@@ -87,7 +87,9 @@ namespace Mu3een.Services
 
         public async Task<SocialEventModel> GetSocialEventById(Guid id)
         {
-            return _mapper.Map<SocialEventModel>(await GetById(id));
+            SocialEvent? socialEvent = await _db.SocialEvents.FindAsync(id);
+            if (socialEvent == null) throw new KeyNotFoundException("Social Service not found");
+            return _mapper.Map<SocialEventModel>(socialEvent);
         }
         public async Task<SocialEvent> GetById(Guid id)
         {
@@ -104,10 +106,10 @@ namespace Mu3een.Services
         }
         public async Task ApplyTo(Guid id, Guid volunteerId)
         {
-            SocialEventVolunteer? socialEventVolunteer = await _db.SocialEventVolunteers.SingleOrDefaultAsync(x => x.VolunteerId == volunteerId && x.SocialEventId == id);
+            SocialEventVolunteer? socialEventVolunteer = await _db.SocialEventVolunteers.AsNoTracking().SingleOrDefaultAsync(x => x.VolunteerId == volunteerId && x.SocialEventId == id);
             if (socialEventVolunteer == null)
             {
-                int count = await _db.SocialEventVolunteers.Where(x => x.SocialEventId == id && x.VolunteerStatus == VolunteerSocialEventStatus.Accept).CountAsync();
+                int count = await _db.SocialEventVolunteers.Where(x => x.SocialEventId == id && x.VolunteerStatus == VolunteerSocialEventStatus.Accept).AsNoTracking().CountAsync();
                 if ((count + 1) < (await GetById(id)).VolunteerRequried!)
                 {
                     await _db.SocialEventVolunteers.AddAsync(new SocialEventVolunteer()
@@ -156,7 +158,7 @@ namespace Mu3een.Services
             SocialEventVolunteer? volunteerSocialEvent = await _db.SocialEventVolunteers.SingleOrDefaultAsync(x => x.SocialEventId == id && x.VolunteerId == volunteerId);
             if (volunteerSocialEvent != null)
             {
-                int count = await _db.SocialEventVolunteers.Where(x => x.SocialEventId == id && x.VolunteerStatus == VolunteerSocialEventStatus.Accept).CountAsync();
+                int count = await _db.SocialEventVolunteers.Where(x => x.SocialEventId == id && x.VolunteerStatus == VolunteerSocialEventStatus.Accept).AsNoTracking().CountAsync();
                 if ((count + 1) < (await GetById(id)).VolunteerRequried!)
                 {
                     volunteerSocialEvent.VolunteerStatus = VolunteerSocialEventStatus.Accept;

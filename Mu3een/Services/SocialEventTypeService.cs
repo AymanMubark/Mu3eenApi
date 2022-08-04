@@ -22,7 +22,7 @@ namespace Mu3een.Services
 
         public async Task<IEnumerable<SocialEventType>> GetAll()
         {
-            return await _db.SocialEventTypes.ToListAsync();
+            return await _db.SocialEventTypes.AsNoTracking().ToListAsync();
         }
 
         public async Task<SocialEventType> GetById(Guid id)
@@ -34,16 +34,19 @@ namespace Mu3een.Services
 
         public async Task Delete(Guid id)
         {
-            _db.Remove(await GetById(id));
+            SocialEventType? socialEventType = await _db.SocialEventTypes.FindAsync(id);
+            if (socialEventType == null) throw new KeyNotFoundException("Social Event Type not found");
+            _db.Remove(socialEventType);
             await _db.SaveChangesAsync();
         }
 
         public async Task Update(Guid id, SocialEventType model)
         {
-            SocialEventType? SocialEventType = await GetById(id);
-            SocialEventType.Name = model.Name;
-            SocialEventType.NameAr = model.NameAr;
-            _db.Update(SocialEventType);
+            SocialEventType? socialEventType = await _db.SocialEventTypes.FindAsync(id);
+            if (socialEventType == null) throw new KeyNotFoundException("Social Event Type not found");
+            socialEventType.Name = model.Name;
+            socialEventType.NameAr = model.NameAr;
+            _db.Update(socialEventType);
             _db.SaveChanges();
         }
     }

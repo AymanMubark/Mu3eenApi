@@ -14,6 +14,5 @@ namespace Mu3een.IServices
         public Task<PagedList<RewardModel>> GetRewardsById(Guid id, PaginationParams model);
         public Task<PagedList<SocialEventVolunteerModel>> GetSocialEventsById(Guid id, PaginationParams model);
         public Task<Volunteer> GetById(Guid id);
-        public Task<Volunteer?> GetByPhone(string phone);
     }
 }

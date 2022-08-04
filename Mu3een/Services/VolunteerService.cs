@@ -35,10 +35,7 @@ namespace Mu3een.Services
             if (volunteer == null) throw new KeyNotFoundException("Volunteer not found");
             return volunteer;
         }
-        public async Task<Volunteer?> GetByPhone(string phone)
-        {
-            return await _db.Volunteers.SingleOrDefaultAsync(x => x.PhoneNumber == phone);
-        }
+ 
 
         public async Task<VolunteerModel> GetVolunteerById(Guid id)
         {
@@ -48,7 +45,7 @@ namespace Mu3een.Services
 
         public async Task<string> VerifyPhone(string phone)
         {
-            Volunteer? volunteer = await GetByPhone(phone);
+            Volunteer? volunteer = await _db.Volunteers.SingleOrDefaultAsync(x => x.PhoneNumber == phone);
             Random random = new();
             var otp = random.Next(1000, 9999).ToString();
             if (volunteer == null)
@@ -79,7 +76,7 @@ namespace Mu3een.Services
 
         public async Task<VerifyOTPResponseModel> VerifyOTP(string phone, string otp)
         {
-            Volunteer? volunteer = await GetByPhone(phone);
+            Volunteer? volunteer = await _db.Volunteers.SingleOrDefaultAsync(x => x.PhoneNumber == phone);
             if (volunteer == null)
             {
                 throw new KeyNotFoundException("Volunteer not found");

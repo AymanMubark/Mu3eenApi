@@ -50,16 +50,17 @@ namespace Mu3een.Services
 
             return _mapper.Map<AdminModel>(admin);
         }
-        public async Task<Admin> GetById(Guid id)
+        public async Task<AdminModel> GetById(Guid id)
         {
             Admin? admin = await _db.Admins.FindAsync(id);
             if (admin == null) throw new KeyNotFoundException("admin not found");
-            return admin;
+            return _mapper.Map<AdminModel>(admin);
         }
 
         public async Task<AdminModel> Update(Guid id, AdminUpdateRequestModel model)
         {
             Admin? admin = await _db.Admins.FindAsync(id);
+            if (admin == null) throw new KeyNotFoundException("Admin not found");
             admin.Name = model.Name;
             admin.Email = model.Email;
             if (model.Image != null)
@@ -77,7 +78,7 @@ namespace Mu3een.Services
         public async Task<AdminLoginResponseModel> Login(AdminLoginRequestModel model)
         {
 
-            Admin? admin = await _db.Admins.SingleOrDefaultAsync(x => x.UserName == model.Username);
+            Admin? admin = await _db.Admins.AsNoTracking().SingleOrDefaultAsync(x => x.UserName == model.Username);
 
             if (admin == null)
             {
@@ -100,6 +101,7 @@ namespace Mu3een.Services
         {
             var query = _db.Admins.Where(x => x.Name!.ToLower().Contains(model.Key ?? "".ToLower())
             || x.UserName!.ToLower().Contains(model.Key ?? "".ToLower())).AsQueryable();
+
             return await PagedList<AdminModel>.CreateAsync(query
              .ProjectTo<AdminModel>(_mapper.ConfigurationProvider)
              .AsNoTracking(), model.PageNumber, model.PageSize);
@@ -107,9 +109,9 @@ namespace Mu3een.Services
 
         public async Task<AdminCountsReportModel> GetAdminCountsReport()
         {
-            var VolunteersCount = await _db.Volunteers.Where(x => x.Status && x.Name != null).CountAsync();
-            var InstitutionsCount = await _db.Institutions.Where(x => x.Status).CountAsync();
-            var RewardsCount = await _db.Rewards.Where(x => x.Status).CountAsync();
+            var VolunteersCount = await _db.Volunteers.Where(x => x.Status && x.Name != null).AsNoTracking().CountAsync();
+            var InstitutionsCount = await _db.Institutions.Where(x => x.Status).AsNoTracking().CountAsync();
+            var RewardsCount = await _db.Rewards.Where(x => x.Status).AsNoTracking().CountAsync();
             return new AdminCountsReportModel()
             {
                 Volunteers = VolunteersCount,
@@ -120,7 +122,10 @@ namespace Mu3een.Services
 
         public async Task<SocailEventsReport> GetSocailEventsReport()
         {
-            List<SocailEventTypeCount> socailEventTypeCount = await _db.SocialEvents.Include(x => x.SocialEventType).Where(x => x.Status).GroupBy(x => x.SocialEventTypeId).Select(x => new SocailEventTypeCount
+            List<SocailEventTypeCount> socailEventTypeCount = await _db.SocialEvents.Include(x => x.SocialEventType)
+                .Where(x => x.Status)
+                .GroupBy(x => x.SocialEventTypeId).AsNoTracking()
+                .Select(x => new SocailEventTypeCount
             {
                 Count = x.Count(),
                 Name = x.First().SocialEventType!.Name,

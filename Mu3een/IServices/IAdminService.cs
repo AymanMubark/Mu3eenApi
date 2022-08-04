@@ -11,6 +11,6 @@ namespace Mu3een.IServices
         public Task<PagedList<AdminModel>> GetAll(AdminSearchModel model);
         public Task<AdminModel> Add(AdminRequestModel model);
         public Task<AdminModel> Update(Guid id, AdminUpdateRequestModel model);
-        public Task<Admin> GetById(Guid id);
+        public Task<AdminModel> GetById(Guid id);
     }
 }

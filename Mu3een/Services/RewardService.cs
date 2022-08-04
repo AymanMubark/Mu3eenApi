@@ -51,24 +51,27 @@ namespace Mu3een.Services
 
         public async Task<int> GetCount()
         {
-            return await _db.Rewards.Where(x => x.Status).CountAsync();
+            return await _db.Rewards.Where(x => x.Status).AsNoTracking().CountAsync();
         }
 
         public async Task<RewardModel> GetRewardById(Guid id)
         {
-            return _mapper.Map<RewardModel>(await GetById(id));
+            Reward? reward = await _db.Rewards.FindAsync(id);
+            if (reward == null) throw new KeyNotFoundException("Reward not found");
+            return _mapper.Map<RewardModel>(reward);
         }
 
         public async Task<Reward> GetById(Guid id)
         {
-            Reward? Reward = await _db.Rewards.FindAsync(id);
-            if (Reward == null) throw new KeyNotFoundException("Reward not found");
-            return Reward;
+            Reward? reward = await _db.Rewards.FindAsync(id);
+            if (reward == null) throw new KeyNotFoundException("Reward not found");
+            return reward;
         }
 
         public async Task Delete(Guid id)
         {
-            var reward = await GetById(id);
+            Reward? reward = await _db.Rewards.FindAsync(id);
+            if (reward == null) throw new KeyNotFoundException("Reward not found");
             reward.Status = false;
             _db.Rewards.Update(reward);
             await _db.SaveChangesAsync();

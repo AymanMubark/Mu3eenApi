@@ -44,7 +44,7 @@ namespace Mu3een.Controllers
         }
        
         [HttpGet("{id}")]
-        public async Task<ActionResult<Admin>> Get( Guid id)
+        public async Task<ActionResult<AdminModel>> Get( Guid id)
         {
             return Ok(await _adminService.GetById(id));
         }

@@ -42,12 +42,14 @@ namespace Mu3een.Services
 
         public async Task<InstitutionModel> GetInstitutionById(Guid id)
         {
-            return _mapper.Map<InstitutionModel>(await GetById(id));
+            Institution? institution = await _db.Institutions.FindAsync(id);
+            if (institution == null) throw new KeyNotFoundException("institution not found");
+            return _mapper.Map<InstitutionModel>(institution);
         }
 
         public async Task<InstitutionLoginResponseModel> Login(string email, string password)
         {
-            Institution? institution = await _db.Institutions.SingleOrDefaultAsync(x => x.Email == email);
+            Institution? institution = await _db.Institutions.AsNoTracking().SingleOrDefaultAsync(x => x.Email == email);
 
             if (institution == null)
             {
@@ -68,10 +70,10 @@ namespace Mu3een.Services
 
         public async Task<InstitutionLoginResponseModel> Register(InstitutionRegisterModel model)
         {
-            Institution? institution = await _db.Institutions.SingleOrDefaultAsync(x => x.Email == model.Email);
+            Institution? institution = await _db.Institutions.SingleOrDefaultAsync(x => x.PhoneNumber == model.Phone || x.Email == model.Email);
             if (institution != null)
             {
-                throw new AppException("email already registerd");
+                throw new AppException("account already registerd");
             }
 
             institution = new Institution
@@ -101,10 +103,10 @@ namespace Mu3een.Services
             };
         }
 
-        public async Task<InstitutionModel> Update(Guid Id, InstitutionRegisterModel model)
+        public async Task<InstitutionModel> Update(Guid id, InstitutionRegisterModel model)
         {
-            Institution? institution = await GetById(Id);
-
+            Institution? institution = await _db.Institutions.FindAsync(id);
+            if (institution == null) throw new KeyNotFoundException("institution not found");
 
             institution.UserName = model.Name;
             institution.Email = model.Email;
