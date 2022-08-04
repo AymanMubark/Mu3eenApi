@@ -1,13 +1,11 @@
 ﻿using Mu3een.Data;
+using API.Helpers;
 using Mu3een.Mapper;
 using Mu3een.Services;
 using Mu3een.IServices;
 using Mu3een.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using API.Helpers;
-using System.Data;
-using Microsoft.Data.SqlClient;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mu3een.Extensions
 {

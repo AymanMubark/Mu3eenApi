@@ -2,8 +2,6 @@
 using Mu3een.Entities;
 using Mu3een.IServices;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace Mu3een.Controllers
 {
     [Route("api/[controller]")]

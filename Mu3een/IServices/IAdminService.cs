@@ -1,5 +1,4 @@
-﻿using Mu3een.Entities;
-using Mu3een.Models;
+﻿using Mu3een.Models;
 
 namespace Mu3een.IServices
 {

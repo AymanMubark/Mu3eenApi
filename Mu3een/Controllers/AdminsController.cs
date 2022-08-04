@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Mu3een.Entities;
 using Mu3een.Extensions;
 using Mu3een.IServices;
 using Mu3een.Models;
